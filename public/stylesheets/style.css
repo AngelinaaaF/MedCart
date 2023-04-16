@@ -8,13 +8,16 @@ URL:http://www.chris-creed.com
 /* -------------------- */
 /* -- General Styles -- */
 /* -------------------- */
+
+
 #wrap{
 	width:960px;
 	margin:0 auto;
+
 }
 body{
 	font-family:arial, sans-serif;
-	background-color:#fff;
+	background-color: rgb(255, 255, 255);
 	color:#555;
 	line-height:24px;
 	font-size:14px;
@@ -52,6 +55,7 @@ a:hover{
 }
 .home{
 	background:url(../images/home-bg.png) repeat-x;
+
 }
 .page{
 	background:url(../images/page-bg.png) repeat-x;
@@ -76,6 +80,7 @@ a:hover{
 #header{
 	height:150px;
 	padding:45px 0 0 0;
+
 }
 #header img, #header h1{
 	float:left;
@@ -90,9 +95,11 @@ a:hover{
 #nav{
 	float:right;
 	margin:25px -15px 0 0;
+
 }
 .menu{
 	padding:7px 6px 0 0;
+	list-style: none;
 }
 .menu li{
 	margin:0 5px;
@@ -153,43 +160,9 @@ a:hover{
 /* ---------------------- */
 /* -- Featured Section -- */
 /* ---------------------- */
-#featured-section{
-	float:left;
-	margin:10px 0 0 0;
-}
-#featured-section h2{
-	background:url(../images/featured-title.png) no-repeat;
-	width:953px;
-	height:56px;
-	text-indent:-9999px;
-	margin-top:0;
-}
-#circles{
-	float:left;
-	margin:10px 0 0 0;
-}
-#circles img{
-	float:left;
-	border:none !important;
-	margin:0 0 0 36px;
-	width:213px;
-	height:205px;
-}
-#featured-section .circle-red{
-	background:url(../images/circle-red.png) no-repeat;
-}
-#featured-section .circle-pink{
-	background:url(../images/circle-pink.png) no-repeat;
-}
-#featured-section .circle-orange{
-	background:url(../images/circle-orange.png) no-repeat;
-}
-#featured-section .circle-yellow{
-	background:url(../images/circle-yellow.png) no-repeat;
-}
-#featured-section .first{
-	margin-left:0;
-}
+
+
+
 /* ------------------ */
 /* -- Image Slider -- */
 /* ------------------ */
@@ -231,58 +204,8 @@ a:hover{
 /* ---------------- */
 /* -- Front Page -- */
 /* ---------------- */
-#frontpage-main{
-	float:left;
-	margin:115px 0 50px 0;
-	background-color:#fff;
-}
-#frontpage-main h3{
-	margin-top:0;
-}
-#frontpage-content{
-	float:left;
-	width:379px;
-	padding:0 100px 0 0;
-	border-right:1px #ddd dotted;
-}
-#frontpage-content p{
-	font-size:16px;
-	line-height:24px;
-}
-#frontpage-sidebar{
-	float:right;
-	width:380px;
-	padding:0 0 0 100px;
-}
-#frontpage-sidebar .meta, #frontpage-sidebar .meta a{
-	color:#aaa;
-	font-size:18px;
-}
-#frontpage-sidebar .blog-title{
-	font-size:18px;
-}
-#frontpage-sidebar .read-more{
-	display:block;
-	background:url(../images/blue-button-bg.png) no-repeat;
-	width:141px;
-	height:34px;
-	color:#fff;
-	text-align:center;
-	padding:5px 0;
-}
-#frontpage-sidebar .read-more:hover{
-	background:url(../images/red-button-bg.png) no-repeat;
-}
-.blue-bullets{
-	float:left;
-	margin:10px 0 0 0;
-}
-.blue-bullets li{
-	background:url(../images/blue-bullet.png) no-repeat;
-	height:21px;
-	position:relative;
-	padding:0px 0 18px 35px;
-}
+
+
 /* ------------- */
 /* -- Content -- */
 /* ------------- */
@@ -486,10 +409,4 @@ a:hover{
 /* ------------ */
 /* -- Footer -- */
 /* ------------ */
-#footer{
-	float:left;
-	border-top:1px #ddd dotted;
-	margin:20px 0 0 0;
-	padding:15px 0 50px 0;
-	width:100%;
-}
+

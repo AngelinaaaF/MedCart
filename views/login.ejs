@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Akono</title>
+    <title>Медицинска карта пользователя</title>
     <meta charset="utf-8">
     <link type="text/css" rel="stylesheet" href="stylesheets/style.css" />
     <link type="text/css" rel="stylesheet" href="stylesheets/skin.css" />
@@ -13,6 +13,9 @@
             <ul class="menu">
                 <li class="current_page_item"><a>Главная</a></li>
                 <li><a>Профиль</a></li>
+                <li><a href="/profile">Профиль</a></li>
+                <li><a href="/carta">Мед.карточка</a></li>
+                <li><a href="/logout">Выйти</a></li>
             </ul>
         </div>
         <!--end nav-->
@@ -20,7 +23,7 @@
     <!--end header-->
 
     <div>
-        <form action="login" method="post">
+        <form action="login" method="post" onsubmit="return validateLogin()">
             <div>
                 <label for="username" >
                     Логин
@@ -29,18 +32,41 @@
             </div>
             <div class="form-group">
                 <label >Пароль</label>
-                <input type="password" name="password" id="password" value=""  placeholder="Пароль" autocomplete="current-password" required>
+                <input type="password" name="password" id="password" value=""  placeholder="Пароль"  required>
             </div>
             <button type="submit">Вход</button>
+            <span id="error-msg" style="color: red;"></span>
+            <script>
+                function validateLogin() {
+                    var username = document.getElementById("username").value;
+                    var password = document.getElementById("password").value;
+
+                    var xhr = new XMLHttpRequest();
+                    xhr.onreadystatechange = function() {
+                        if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
+                            window.location.replace("/home");
+                        }
+                        else{
+                                var response = JSON.parse(this.responseText);
+                                // Login failed, show error message
+                                document.getElementById("error-msg").innerHTML = response.message;
+                                return false;
+                        }
+                    };
+                    xhr.open("POST", "login", true);
+                    xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+                    xhr.send("username=" + username + "&password=" + password);
+
+                    return false;
+                }
+
+            </script>
         </form>
     </div>
-    <div id="footer">
-        <p class="copyright">Copyright &copy; <a href="#">Domain Name</a> - All Rights Reserved / Design By <a target="_blank" href="http://www.chris-creed.com/">Chris Creed</a></p>
-    </div>
+
     <!--end footer-->
 </div>
 <!--end wrap-->
 </body>
-<div class="cache-images"><img src="images/red-button-bg.png" width="0" height="0" alt="" /><img src="images/black-button-bg.png" width="0" height="0" alt="" /></div>
 <!--end cache-images-->
 </html>
