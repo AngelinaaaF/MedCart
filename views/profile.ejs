@@ -15,13 +15,74 @@
                 <li class="current_page_item"><a href="/profile">Профиль</a></li>
                 <li><a href="/carta">Мед.карточка</a></li>
                 <li><a href="/logout">Выйти</a></li>
-                <li> <%= username %></li>
             </ul>
         </div>
-        <!--end nav-->
     </div>
-    <!--end header-->
+        <div class="profile-image">
+            <img src="path/to/profile-photo" alt="Profile photo">
+        </div>
+        <div class="info-user">
+            <form method="post" action="/profile">
+                <label for="name">Name:</label>
+                <input type="text" name="name" value="<%= name %>">
 
+                <label for="surname">Surname:</label>
+                <input type="text" name="surname" value="<%= surname %>">
+
+                <label for="gender">Gender:</label>
+                <select name="gender">
+                    <option value="male" <%= gender === 'male' ? 'selected' : '' %>>Male</option>
+                    <option value="female" <%= gender === 'female' ? 'selected' : '' %>>Female</option>
+                </select>
+
+                <label for="birthday">Birthday:</label>
+                <!--<input type="date" name="birthday" placeholder="dd-mm-yyyy" value="<%= birthday %>" pattern="\d{4}-\d{2}-\d{2}"> -->
+                <input type="date" name="birthday" value="<%= birthday ? new Date(birthday).toLocaleDateString() : 'dd-mm-yyyy' %>">
+
+                <label for="number_phone">Phone number:</label>
+                <input type="text" name="number_phone" value="<%= number_phone %>">
+
+                <button type="submit">Save Changes</button>
+            </form>
+        </div>
+
+        <script>
+            // JavaScript code goes here
+            const form = document.querySelector('form');
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const name = document.querySelector('input[name="name"]').value;
+                const surname = document.querySelector('input[name="surname"]').value;
+                const gender = document.querySelector('select[name="gender"]').value;
+                const birthday = document.querySelector('input[name="birthday"]').value;
+                const number_phone = document.querySelector('input[name="number_phone"]').value;
+                const today = new Date();
+                const selectedDate = new Date(birthday);
+                if (selectedDate > today) {
+                    alert("Введите корректную дату");
+                    return;
+                }
+                fetch('/profile', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        name: name,
+                        surname: surname,
+                        gender: gender,
+                        birthday: birthday,
+                        number_phone: number_phone
+                    })
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log(data);
+                        window.location.href = '/profile';
+                    })
+                    .catch(error => console.error(error));
+            });
+        </script>
 </div>
 <!--end wrap-->
 </body>
