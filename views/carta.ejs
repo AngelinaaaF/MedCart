@@ -5,6 +5,33 @@
     <meta charset="utf-8">
     <link type="text/css" rel="stylesheet" href="stylesheets/style.css" />
     <link type="text/css" rel="stylesheet" href="stylesheets/skin.css" />
+    <style>
+        /* styles for image-upload container */
+        .image-upload {
+            max-width: 500px;
+            margin: 0 auto;
+            background-color: #f8f8f8;
+            border-radius: 5px;
+            padding: 20px;
+            box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.2);
+        }
+
+        /* styles for submit button */
+        button[type="submit"] {
+            background-color: #555;
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 5px;
+            border: none;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        /* styles for submit button on hover */
+        button[type="submit"]:hover {
+            background-color: #333;
+        }
+    </style>
 </head>
 <body class="home">
 <div id="wrap">
@@ -14,11 +41,83 @@
                 <li ><a href="/home">Главная</a></li>
                 <li><a href="/profile">Профиль</a></li>
                 <li class="current_page_item"><a href="/carta">Мед.карточка</a></li>
+                <li><a href="/visit_doctor">Визит к врачу</a></li>
                 <li><a href="/logout">Выйти</a></li>
             </ul>
         </div>
     </div>
+    <button onclick="showForm()">Добавить заключение</button>
+    <div id="upload-form" style="display: none;">
+        <form action="/file/upload" method="POST" enctype="multipart/form-data">
+            <label for="name_conclusion">Название заключения:</label>
+            <input type="text" name="name_conclusion" required>
+            <select name="type_conclusion">
+                <option >Анализы</option>
+                <option >Флюрография</option>
+            </select>
+            <label for="name_doctor">Имя врача:</label>
+            <input type="text" name="name_doctor">
+            <label for="type_doctor">Должность:</label>
+            <input type="text" name="type_doctor">
+            <label for="data_conclusion">Дата заключения:</label>
+            <input type="date" name="data_conclusion" placeholder="dd-mm-yyyy"  pattern="\d{4}-\d{2}-\d{2}">
+            <label for="file">File:</label>
+            <input type="file" name="filedata" id="file" required>
+            <br>
+            <input type="submit" value="Загрузить">
+            <button type="button" onclick="hideForm()">Закрыть</button>
+        </form>
+    </div>
+
+    <div id="gallery">
+        <% files.forEach(function(file) { %>
+            <div class="file">
+                <% if(file.file_type==='png'||file.file_type==='jpeg'||file.file_type==='jpg')
+                { %>
+                    <img src="<%= file.file_path %>" alt="<%= file.name_conclusion %>"/>
+                <% } else if (file.file_type==='pdf') { %>
+                    <embed src="<%= file.file_path %>" type="application/pdf" width="100%" height="600px">
+                <% } else if (file.file_type==='doc' || file.file_type==='docx') { %>
+                    <iframe src="https://docs.google.com/gview?url=<%= file.file_path %>&embedded=true" style="width:100%; height:600px;" frameborder="0"></iframe>
+                <% } else { %>
+                    <div class="file-icon">
+                        <a class="fa fa-file">Скачать</a>
+                    </div>
+                <% } %>
+                <div class="file-name"><%= file.name_conclusion %></div>
+            </div>
+        <% }); %>
+
+    </div>
+    <script>
+        const gallery = document.querySelector('#gallery');
+        const files= <%= JSON.stringify(files) %>;
+
+        files.forEach(function(file) {
+            const fileDiv = gallery.querySelector(`[alt="${file.name}"]`);
+            if(fileDiv) {
+                fileDiv.parentNode.removeChild(fileDiv);
+            }
+        });
+    </script>
+    <script>
+        function showForm() {
+            document.getElementById("upload-form").style.display = "block";
+        }
+        function hideForm() {
+            document.getElementById("upload-form").style.display = "none";
+        }
+        const addFileBtn = document.querySelector('#add-file-btn');
+        const addFileForm = document.querySelector('#add-file-form');
+        const closeAddFileBtn = document.querySelector('#close-add-file-btn');
+        addFileBtn.addEventListener('click', () => {
+            addFileForm.style.display = 'block';
+        });
+        closeAddFileBtn.addEventListener('click', () => {
+            addFileForm.style.display = 'none';});
+    </script>
 </div>
+
 <!--end wrap-->
 </body>
 <!--end cache-images-->

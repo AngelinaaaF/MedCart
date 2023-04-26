@@ -14,6 +14,7 @@
                 <li class="current_page_item"><a>Главная</a></li>
                 <li><a href="/profile">Профиль</a></li>
                 <li><a href="/carta">Мед.карточка</a></li>
+                <li><a href="/visit_doctor">Визит к врачу</a></li>
                 <li><a href="/logout">Выйти</a></li>
             </ul>
         </div>
@@ -33,7 +34,9 @@
                 <label >Пароль</label>
                 <input type="password" name="password" id="password" value=""  placeholder="Пароль"  required>
             </div>
-            <button type="submit">Вход</button>
+            <div class="button-container">
+                <button type="submit" class="login-btn">Войти</button>
+            </div>
             <span id="error-msg" style="color: red;"></span>
             <script>
                 function validateLogin() {
@@ -43,6 +46,7 @@
                     var xhr = new XMLHttpRequest();
                     xhr.onreadystatechange = function() {
                         if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
+
                             window.location.replace("/home");
                         }
                         else{
@@ -60,6 +64,10 @@
                 }
 
             </script>
+            <p>Нет аккаунта?</p>
+            <div class="button-container">
+                <a href="/register" class="register-btn">Зарегистрироваться</a>
+            </div>
         </form>
     </div>
 

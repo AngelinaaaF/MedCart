@@ -14,21 +14,56 @@
                 <li class="current_page_item"><a>Главная</a></li>
                 <li><a href="/profile">Профиль</a></li>
                 <li><a href="/carta">Мед.карточка</a></li>
+                <li><a href="/visit_doctor">Визит к врачу</a></li>
                 <li><a href="/logout">Выйти</a></li>
             </ul>
         </div>
         <!--end nav-->
     </div>
-
     <div>
-        <form action="/register" method="post">
+        <form action="/register" method="post" onsubmit="return validateRegistration()">
             <label for="username">Username:</label>
             <input type="text" id="username" name="username" required><br><br>
+            <div id="username-msg"></div>
             <label for="password">Password:</label>
             <input type="password" id="password" name="password" required><br><br>
-            <input type="submit" value="Register">
+            <div id="password-msg"></div>
+            <div class="button-container">
+                <input type="submit" class="register-btn" value="Зарегистрироваться">
+            </div>
+            <span id="error-msg" style="color: red;"></span>
+            <span id="cussc" style="color: red;"></span>
+
+            <script>
+                function validateRegistration() {
+                    var username = document.getElementById("username").value;
+                    var password = document.getElementById("password").value;
+
+                    var xhr = new XMLHttpRequest();
+                    xhr.onreadystatechange = function() {
+                        if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
+                            document.getElementById("cussc").innerHTML = response.message;
+                        }
+                        else{
+                            var response = JSON.parse(this.responseText);
+                            // Login failed, show error message
+                            document.getElementById("error-msg").innerHTML = response.message;
+                            return false;
+                        }
+                    };
+                    xhr.open("POST", "register", true);
+                    xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+                    xhr.send("username=" + username + "&password=" + password);
+                    return false;
+                }
+            </script>
+            <div class="button-container">
+                <a href="/login" class="register-btn">Войти</a>
+            </div>
         </form>
+
     </div>
+
 </div>
 </div>
 </body>
