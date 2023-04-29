@@ -5,33 +5,6 @@
     <meta charset="utf-8">
     <link type="text/css" rel="stylesheet" href="stylesheets/style.css" />
     <link type="text/css" rel="stylesheet" href="stylesheets/skin.css" />
-    <style>
-        /* styles for image-upload container */
-        .image-upload {
-            max-width: 500px;
-            margin: 0 auto;
-            background-color: #f8f8f8;
-            border-radius: 5px;
-            padding: 20px;
-            box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.2);
-        }
-
-        /* styles for submit button */
-        button[type="submit"] {
-            background-color: #555;
-            color: #fff;
-            padding: 10px 20px;
-            border-radius: 5px;
-            border: none;
-            font-size: 16px;
-            cursor: pointer;
-        }
-
-        /* styles for submit button on hover */
-        button[type="submit"]:hover {
-            background-color: #333;
-        }
-    </style>
 </head>
 <body class="home">
 <div id="wrap">
@@ -46,26 +19,44 @@
             </ul>
         </div>
     </div>
-    <button onclick="showForm()">Добавить заключение</button>
+    <div class="button-container">
+    <button onclick="showForm()">Добавить запись</button>
+    </div>
     <div id="upload-form" style="display: none;">
         <form action="/file/upload" method="POST" enctype="multipart/form-data">
-            <label for="name_conclusion">Название заключения:</label>
+            <label for="name_conclusion">Название документа:</label>
             <input type="text" name="name_conclusion" required>
             <select name="type_conclusion">
                 <option >Анализы</option>
+                <option >Аллергия</option>
+                <option >Заключение врача</option>
+                <option >Консультация</option>
+                <option >Направления</option>
+                <option >Плановый прием</option>
+                <option >Прививка</option>
+                <option >Рентген</option>
+                <option >Справка</option>
+                <option >Стоматология</option>
                 <option >Флюрография</option>
+                <option >Хроническое заболевание</option>
+                <option >МРТ</option>
+                <option >КТ</option>
+                <option >УЗИ</option>
+                <option >Другое</option>
             </select>
-            <label for="name_doctor">Имя врача:</label>
-            <input type="text" name="name_doctor">
-            <label for="type_doctor">Должность:</label>
-            <input type="text" name="type_doctor">
+            <select name="type_doctor">
+                <option >Аллерголог</option>
+                <option >Реаниматолог</option>
+            </select>
             <label for="data_conclusion">Дата заключения:</label>
             <input type="date" name="data_conclusion" placeholder="dd-mm-yyyy"  pattern="\d{4}-\d{2}-\d{2}">
-            <label for="file">File:</label>
+            <label for="file">Файл для загрузки:</label>
             <input type="file" name="filedata" id="file" required>
             <br>
-            <input type="submit" value="Загрузить">
+            <div class="button-container">
+            <input type="submit" value="Продолжить">
             <button type="button" onclick="hideForm()">Закрыть</button>
+            </div>
         </form>
     </div>
 
@@ -74,9 +65,11 @@
             <div class="file">
                 <% if(file.file_type==='png'||file.file_type==='jpeg'||file.file_type==='jpg')
                 { %>
-                    <img src="<%= file.file_path %>" alt="<%= file.name_conclusion %>"/>
-                <% } else if (file.file_type==='pdf') { %>
-                    <embed src="<%= file.file_path %>" type="application/pdf" width="100%" height="600px">
+                    <a href="/carta/carta_file/<%= file.file_id %>"  rel="noopener noreferrer">
+                        <img src="<%= file.file_path %>" alt="<%= file.name_conclusion %>" />
+                    </a>
+                    <% } else if (file.file_type==='pdf') { %>
+                        <img data-pdf-thumbnail-file=<%= file.file_path %> width="100%" height="600px"/>
                 <% } else if (file.file_type==='doc' || file.file_type==='docx') { %>
                     <iframe src="https://docs.google.com/gview?url=<%= file.file_path %>&embedded=true" style="width:100%; height:600px;" frameborder="0"></iframe>
                 <% } else { %>
@@ -89,9 +82,10 @@
         <% }); %>
 
     </div>
+
     <script>
         const gallery = document.querySelector('#gallery');
-        const files= <%= JSON.stringify(files) %>;
+        const files = <%= JSON.stringify(files) %>;
 
         files.forEach(function(file) {
             const fileDiv = gallery.querySelector(`[alt="${file.name}"]`);
@@ -120,5 +114,6 @@
 
 <!--end wrap-->
 </body>
+
 <!--end cache-images-->
 </html>

@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Медицинска карта пользователя</title>
+    <meta charset="utf-8">
+    <link type="text/css"  rel="stylesheet" href="/stylesheets/style.css" />
+    <link type="text/css" link rel="stylesheet" href="/stylesheets/skin.css" />
+</head>
+<body class="home">
+<div id="wrap">
+    <div id="header"> <img src="/images/logo.png" />
+        <div id="nav">
+            <ul class="menu">
+                <li><a href="/home">Главная</a></li>
+                <li><a href="/profile">Профиль</a></li>
+                <li><a href="/carta">Мед.карточка</a></li>
+                <li class="current_page_item"><a href="/visit_doctor">Визит к врачу</a></li>
+                <li><a href="/logout">Выйти</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="info-user">
+        <form method="post" action="/file/upload/notedata/<%= id_conclusion %>">
+            <h1><b>Добавить дополнительную информацию </b></h1>
+            <h1><b><%=type_conclusion%> , название: <%=name_conclusion%></b></h1>
+            <label for="doctor">Врач:</label>
+            <input type="doctor" name="doctor">
+            <label for="place_conclusion">Название клиники</label>
+            <input type="text" name="place_conclusion" >
+        <% if(type_conclusion==='Обследование'|| type_conclusion==='Консультация'||type_conclusion==='Плановый прием'||type_conclusion==='Хроническое заболевание'||type_conclusion==='Другое')
+        { %>    <label for="code">Код/Название</label>
+                <input type="text" name="code">
+                <label for="diagnosis">Диагноз</label>
+                <input type="text" name="diagnosis">
+                <label for="complaints">Жалобы</label>
+                <input type="text" name="complaints">
+                <label for="anamnez">Анамнез</label>
+                <input type="text" name="anamnez">
+                <label for="conclusion">Заключение</label>
+                <input type="text" name="conclusion">
+                <label for="prescription">Назначение рецепта</label>
+                <input type="text" name="prescription">
+            <% } if (type_conclusion==='Рентген'||type_conclusion==='МРТ'||type_conclusion==='КТ'||type_conclusion==='УЗИ')
+                {%> <label for="area">Область</label>
+                <input type="text" name="area">
+                <label for="diagnosis">Диагноз</label>
+                <input type="text" name="diagnosis">
+                <label for="conclusion">Заключение</label>
+                <input type="text" name="conclusion">
+                <label for="prescription">Назначение рецепта</label>
+                <input type="text" name="prescription">
+            <% } if (type_conclusion==='Направление')
+            {%> <label for="purpose">Цель:</label>
+                <input type="text" name="purpose">
+                <label for="todoctor">К врачу:</label>
+                <input type="text" name="todoctor">
+                <label for="justification">Обоснование направления</label>
+                <input type="text" name="justification">
+                <label for="diagnosis">Диагноз</label>
+                <input type="text" name="diagnosis">
+                <label for="cameto">Явиться к</label>
+                <input type="text" name="cameto">
+            <% } if (type_conclusion==='Справка')
+                {%> <label for="number">Номер справки</label>
+                <input type="text" name="number">
+                <label for="diagnosis">Перенесенное заболевание</label>
+                <input type="text" name="diagnosis">
+                <label for="date_starting">Дата с:</label>
+                <input type="text" name="date_starting">
+                <label for="date_finish">Дата с:</label>
+                <input type="text" name="date_finish">
+            <% } if (type_conclusion==='Анализы')
+                {%> <label for="code">Код/Название</label>
+                <input type="text" name="code">
+                <label for="conclusion">Заключение</label>
+                <input type="text" name="conclusion">
+            <% }   if (type_conclusion==='Аллергия')
+            {%> <label for="code">Код/Название</label>
+                <input type="text" name="code">
+                <label for="allergen">Аллерген</label>
+                <input type="text" name="allergen">
+                <label for="reaction">Реакция</label>
+                <input type="text" name="reaction">
+                <label for="prescription">Назначение рецепта</label>
+                <input type="text" name="prescription">
+            <% }  if (type_conclusion==='Прививка')
+            {%> <label for="code">Код/Название</label>
+                <input type="text" name="code">
+                <label for="medication">Препарат</label>
+                <input type="text" name="medication">
+                <label for="dose">Доза</label>
+                <input type="text" name="dose">
+            <% }  if (type_conclusion==='Стоматология')
+            {%>  <label for="diagnosis">Диагноз</label>
+                <input type="text" name="diagnosis">
+                <label for="complaints">Жалобы</label>
+                <input type="text" name="complaints">
+                <label for="anamnez">Анамнез</label>
+                <input type="text" name="anamnez">
+                <label for="conclusion">Заключение</label>
+                <input type="text" name="conclusion">
+            <% } %>
+            <label for="comment">Дополнительная информация:</label>
+            <input type="text" name="comment" >
+            <div class="button-container">
+            <button type="submit">Save Changes</button>
+            </div>
+        </form>
+    </div>
+</div>
+<!--end wrap-->
+</body>
+</html>

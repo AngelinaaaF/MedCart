@@ -30,7 +30,6 @@ input[type="password"] {
 	box-shadow: 0px 0px 5px 1px rgba(0, 0, 0, 0.1);
 	display: inline-block;
 }
-
 button[type="submit"] {
 	width: 100px;
 	height: 40px;
@@ -45,7 +44,34 @@ button[type="submit"] {
 	transition: all 0.3s ease-in-out;
 	margin-top: 20px;
 }
-
+button[type="button"] {
+	width: 100px;
+	height: 40px;
+	background-color: #6f98bb;
+	color: white;
+	font-size: 20px;
+	font-weight: bold;
+	border-radius: 5px;
+	border: none;
+	box-shadow: 0px 0px 5px 1px rgba(0, 0, 0, 0.1);
+	cursor: pointer;
+	transition: all 0.3s ease-in-out;
+	margin-top: 20px;
+}
+button[type="onclick"] {
+	width: 100px;
+	height: 40px;
+	background-color: #6f98bb;
+	color: white;
+	font-size: 20px;
+	font-weight: bold;
+	border-radius: 5px;
+	border: none;
+	box-shadow: 0px 0px 5px 1px rgba(0, 0, 0, 0.1);
+	cursor: pointer;
+	transition: all 0.3s ease-in-out;
+	margin-top: 20px;
+}
 #error-msg {
 	display: block;
 	text-align: center;
@@ -282,21 +308,6 @@ select {
 	color: #555;
 }
 
-/* styles for submit button */
-button[type="submit"] {
-	background-color: #555;
-	color: #fff;
-	padding: 10px 20px;
-	border-radius: 5px;
-	border: none;
-	font-size: 16px;
-	cursor: pointer;
-}
-
-/* styles for submit button on hover */
-button[type="submit"]:hover {
-	background-color: #333;
-}
 
 /*АААААААААААААААААААААААААААААААААААААААа*/
 #gallery {
@@ -329,4 +340,12 @@ button[type="submit"]:hover {
 .file-name {
 	margin-top: 10px;
 	text-align: center;
+}
+.image-upload {
+	max-width: 500px;
+	margin: 0 auto;
+	background-color: #f8f8f8;
+	border-radius: 5px;
+	padding: 20px;
+	box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.2);
 }

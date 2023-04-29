@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Медицинска карта пользователя</title>
+    <meta charset="utf-8">
+    <link type="text/css" rel="stylesheet" href="/stylesheets/style.css" />
+    <link type="text/css" rel="stylesheet" href="/stylesheets/skin.css" />
+</head>
+<body class="home">
+<div id="wrap">
+    <div id="header"> <img src="/images/logo.png" />
+        <div id="nav">
+            <ul class="menu">
+                <li><a href="/home">Главная</a></li>
+                <li class="current_page_item"><a href="/profile">Профиль</a></li>
+                <li><a href="/carta">Мед.карточка</a></li>
+                <li><a href="/visit_doctor">Визит к врачу</a></li>
+                <li><a href="/logout">Выйти</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="info-user">
+        <form id="conclusion-form" method="post" action="/carta/carta_file/<%= file_id %>">
+            <label for="name"> <%=type_conclusion%></label>
+            <label for="name_conclusion">Название</label>
+            <input type="text" name="name_conclusion" value="<%=name_conclusion%>" readonly>
+            <label for="type_doctor">Доктор:</label>
+            <select name="type_doctor" readonly>
+                <option > <%=type_doctor%> </option>
+                <option >Аллерголог</option>
+                <option >Реаниматолог</option>
+            </select>
+            <label for="place_conclusion">Место</label>
+            <input type="text" name="place_conclusion" value="<%=place_conclusion%>" readonly>
+            <label for="doctor">Врач</label>
+            <input type="text" name="doctor" value="<%=place_conclusion%>" readonly>
+            <label for="data_conclusion">Дата заключения:</label>
+            <input type="date" name="data_conclusion" placeholder="dd-mm-yyyy" value="<%=place_conclusion%>" pattern="\d{4}-\d{2}-\d{2}" readonly>
+            <label for="comment">Комментарии</label>
+            <input type="text" name="comment" value="<%=comment%>" readonly>
+
+            <% if ( "conclusion" in type_info) {%>
+                <label for="conclusion">Number</label>
+                <input type="text" name="conclusion" value="<%=type_info['conclusion']%>" readonly>
+            <%}%>
+            <div class="file">
+                <% if(file.file_type==='png'||file.file_type==='jpeg'||file.file_type==='jpg')
+                { %>
+                    <img src="/<%= file.file_path %>" />
+                <% } else if (file.file_type==='pdf') { %>
+                    <img data-pdf-thumbnail-file=<%= file.file_path %> width="100%" height="600px"/>
+                <% } else if (file.file_type==='doc' || file.file_type==='docx') { %>
+                    <iframe src="https://docs.google.com/gview?url=<%= file.file_path %>&embedded=true" style="width:100%; height:600px;" frameborder="0"></iframe>
+                <% } else { %>
+                    <div class="file-icon">
+                        <a class="fa fa-file">Скачать</a>
+                    </div>
+                <% } %>
+                <div class="file-name"><a href="/carta/carta_file/<%= file.file_id %>" target="_blank" rel="noopener noreferrer"><%= file.name_conclusion %></a>
+                </div>
+            </div>
+            <button id="edit-button" type="button">Редактировать</button>
+            <button id="save-button" type="submit" style="display: none;">Сохранить изменения</button>
+
+        </form>
+    </div>
+</div>
+<!--end wrap-->
+
+<script>
+    const editButton = document.getElementById('edit-button');
+    const saveButton = document.getElementById('save-button');
+    const conclusionInput = document.querySelector('input[name="name_conclusion"], ' +
+        'select[name="type_doctor"], input[name="place_conclusion"]');
+
+
+    // Обработчик нажатия кнопки "Редактировать"
+    editButton.addEventListener('click', () => {
+        editButton.style.display = 'none';
+        saveButton.style.display = 'block';
+        conclusionInput.removeAttribute('readonly');
+    });
+
+    // Обработчик отправки формы
+    document.getElementById('conclusion-form').addEventListener('submit', () => {
+        editButton.style.display = 'block';
+        saveButton.style.display = 'none';
+        conclusionInput.setAttribute('readonly', '');
+    });
+</script>
+
+</body>
+<!--end cache-images-->
+</html>

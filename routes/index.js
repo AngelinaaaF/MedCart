@@ -231,96 +231,6 @@ router.post('/register', (req, res) => {
   }
 });
 
-/*
-router.get('/carta', function(req, res, next) {
-  console.log(req.session)
-
-  // If the user is loggedin
-  if (req.session.loggedin) {
-    // Output username
-    connection.query(
-        'SELECT username FROM auth_users WHERE id = ?',
-        [req.session.user_id],
-        function (error, results, fields) {
-          if (error) throw error;
-          res.render('carta', { username: results[0]['username'] });
-        }
-    );
-  } else {
-    // Not logged in
-    res.redirect('/');
-  }
-});
-
-
- */
-/* Загрузка файла*/
-/*router.post('/file/upload', function(req, res, next) {
-  if (!req.session.loggedin) {
-    // Not logged in
-    res.redirect('/');
-  }
-  let filedata = req.file;
-  console.log(filedata);
-  if(!filedata){
-    res.send("Ошибка при загрузке файла");
-  }
-  connection.query('INSERT INTO files (user_id, file_path) VALUES (?, ?)', [req.session.user_id, req.file.path],
-  function(error, results, fields) {
-    // If there is an issue with the query, output the error
-    if (error) throw error;
-    // If the user is successfully registered, redirect to the login page
-    res.redirect('/carta');
-  });
-  res.redirect('/carta');
-});
-
-
-*/
-/* Получить список файлов у пользователя*//*
-router.get('/files', function(req, res, next) {
-  if (!req.session.loggedin) {
-    // Not logged in
-    res.redirect('/');
-  }
-  /*
-  * делаем селект из базы данных, получаем file_id отдаем их в ответе списком [1,2,3,4,5,...]
-  * Далее в html мы их обрабатываем, то есть делаем запросы /file/{file_id} file_id берем из списка
-  * и вопрос как их отобразить
-  * *//*
-  connection.query('SELECT file_id, file_path FROM files WHERE user_id = ?', [req.session.user_id],
-      function(error, results, fields) {
-        // If there is an issue with the query, output the error
-        if (error) throw error;
-        res.render('fileList', { files: results });
-      });
-});
-*/
-/* Получить файл по id *//*
-router.get('/file/:id', function(req, res, next) {
-  if (!req.session.loggedin) {
-    // Not logged in
-    res.redirect('/');
-  }
-  /*
-  * Ходим в базу данных и получаем путь до файла потом с помошью ?? возвращаем файл.
-  * *//*
-  connection.query('SELECT file_path FROM files WHERE file_id = ? AND user_id = ?', [req.params.id, req.session.user_id],
-      function(error, results, fields) {
-        // If there is an issue with the query, output the error
-        if (error) throw error;
-
-        // If the file path was found in the database
-        if (results.length > 0) {
-          // Send the file back to the client
-          res.sendFile(results[0].file_path);
-        } else {
-          // File not found, send a 404 response
-          res.status(404).send('File not found');
-        }
-      });
-});
-*/
 const pdfThumbnail = require('pdf-thumbnail');
 router.get('/carta', function(req, res, next) {
   console.log(req.session)
@@ -329,9 +239,10 @@ router.get('/carta', function(req, res, next) {
   if (req.session.loggedin) {
           // Query the database for all files uploaded by the user
           connection.query(
-              'SELECT files.file_path as file_path, files.file_type as file_type, conclusion.name_conclusion as name_conclusion FROM files left join conclusion on files.id_conclusion = conclusion.id_conclusion where files.user_id =?',
+              'SELECT files.file_path as file_path, files.file_id as file_id,  files.file_type as file_type, conclusion.name_conclusion as name_conclusion FROM files left join conclusion on files.id_conclusion = conclusion.id_conclusion where files.user_id =?',
               [req.session.user_id],
                function (error, results, fields) {
+
                 console.log(results)
                 if (results.length === 0){
                   res.render('carta', {files:[]});
@@ -341,9 +252,6 @@ router.get('/carta', function(req, res, next) {
                 // Pass the files array to the template
                 res.render('carta', {
                   files: results
-                // Pass the files variable to the template
-                /*res.render('carta', {
-                  file: results[0]*/
                 });
               }
           );
@@ -362,18 +270,11 @@ router.post('/file/upload', function(req, res, next) {
   }
   let name_conclusion = req.body.name_conclusion;
   let type_conclusion = req.body.type_conclusion;
-  let type_doctor = req.body.type_doctor;
-  let name_doctor = req.body.name_doctor;
   let data_conclusion = req.body.data_conclusion;
+  let type_doctor  = req.body.type_doctor;
   let filedata = req.file;
   if (!type_conclusion) {
     type_conclusion = null;
-  }
-  if (!type_doctor) {
-    type_doctor = null;
-  }
-  if (!name_doctor) {
-    name_doctor = null;
   }
   if (!data_conclusion) {
     data_conclusion = null;
@@ -382,25 +283,231 @@ router.post('/file/upload', function(req, res, next) {
   if(!filedata){
     res.send("Ошибка при загрузке файла");
   }
+  //убирам лишний паблик
   let path = req.file.path.replace('public\\','');
+  //берем тип
   let fileType = req.file.originalname.split('.').pop();
-  connection.query('INSERT INTO conclusion (name_conclusion, type_conclusion,data_conclusion,type_doctor,name_doctor,user_id) VALUES (?, ?,?,?,?,?)'
-      , [name_conclusion,type_conclusion,data_conclusion,type_doctor,name_doctor,req.session.user_id],
+  connection.query('INSERT INTO conclusion (type_doctor,name_conclusion, type_conclusion,data_conclusion,user_id) VALUES (?,?,?,?,?)'
+      , [type_doctor,name_conclusion,type_conclusion,data_conclusion,req.session.user_id],
       function(error, results, fields)
       {
         if (error) throw error;
   connection.query('SELECT id_conclusion FROM conclusion WHERE name_conclusion = ?',
       [name_conclusion], function(error, results, fields)
       {
+        let id_conclusion = results[0]['id_conclusion'];
           connection.query('INSERT INTO files (user_id, file_path,id_conclusion,file_type) VALUES (?, ?,?,?)'
       , [req.session.user_id, path ,[results[0]['id_conclusion']],fileType],
           function(error, results, fields)
           {
             if (error) throw error;
-            res.redirect('/carta');
+            res.redirect('/file/upload/notedata/'+id_conclusion)
           });
       });
 });
+});
+router.get('/file/upload/notedata/:id', function(req, res, next) {
+  console.log(req.session)
+  if (!req.session.loggedin) {
+    res.redirect('/');
+    return;
+  }
+  connection.query(
+      'SELECT * FROM conclusion where id_conclusion =?',
+      [req.params.id],
+      function (error, results, fields) {
+        console.log(results)
+        if (results.length === 0) {
+          res.redirect('carta');
+          return;
+        }
+        if(results[0].user_id!==req.session.user_id){
+          res.redirect('carta');
+
+        }
+        res.render('notedata' , {
+          id_conclusion: req.params.id,
+          name_conclusion: results[0]['name_conclusion'],
+          type_conclusion: results[0]['type_conclusion'],
+          doctor: results[0]['doctor'],
+          place_conclusion: results[0]['place_conclusion'],
+          comment: results[0]['comment'],
+        });
+      });
+});
+
+router.post('/file/upload/notedata/:id', function(req, res, next) {
+  // If the user is not logged in, redirect to the home page
+  console.log(req.session)
+  if (!req.session.loggedin) {
+    res.redirect('/');
+    return;
+  }
+  let name_conclusion = req.body.name_conclusion;
+  let comment = req.body.comment;
+  let place_conclusion = req.body.place_conclusion;
+  let doctor  = req.body.doctor;
+  if (!doctor) {
+    doctor = null;
+  }
+  if (!place_conclusion) {
+    place_conclusion = null;
+  }
+  if (!comment) {
+    comment = null;
+  }
+  console.log(req.body)
+  console.log("code: ",req.body.code)
+  console.log("complaints: ",req.body.complaints)
+  let type_info = {};
+
+  if(req.body.code !== undefined){
+    type_info['code']=req.body.code
+  };
+  if(req.body.diagnosis !== undefined){
+    type_info['diagnosis']=req.body.diagnosis
+  };
+  if(req.body.complaints !== undefined){
+    type_info['complaints']=req.body.complaints
+  };
+  if(req.body.diagnosis !== undefined){
+    type_info['diagnosis']=req.body.diagnosis
+  };
+  if(req.body.anamnez !== undefined){
+    type_info['anamnez']=req.body.anamnez
+  };
+  if(req.body.conclusion !== undefined){
+    type_info['conclusion']=req.body.conclusion
+  };
+  if(req.body.prescription !== undefined){
+    type_info['prescription']=req.body.prescription
+  };
+  /**********************************************/
+  if(req.body.area !== undefined){
+    type_info['area']=req.body.area
+  };
+  /*******************************************/
+  if(req.body.purpose !== undefined){
+    type_info['purpose']=req.body.purpose
+  };
+  if(req.body.todoctor !== undefined){
+    type_info['todoctor']=req.body.todoctor
+  };
+  if(req.body.justification !== undefined){
+    type_info['justification']=req.body.justification
+  };
+  if(req.body.cameto !== undefined){
+    type_info['cameto']=req.body.cameto
+  };
+  /**********************************************/
+  if(req.body.number !== undefined){
+    type_info['number']=req.body.number
+  };
+  if(req.body.date_starting !== undefined){
+    type_info['date_starting']=req.body.date_starting
+  };
+  if(req.body.date_finish !== undefined){
+    type_info['date_finish']=req.body.date_finish
+  };
+  /**************************************************/
+  if(req.body.allergen !== undefined){
+    type_info['allergen']=req.body.allergen
+  };
+  if(req.body.reaction !== undefined){
+    type_info['reaction']=req.body.reaction
+  };
+  /*********************************************/
+  if(req.body.medication !== undefined){
+    type_info['medication']=req.body.medication
+  };
+  if(req.body.dose !== undefined){
+    type_info['dose']=req.body.dose
+  };
+  /*********************************************/
+  connection.query(
+      'UPDATE conclusion SET place_conclusion=?, doctor= ?,comment =? , type_info = ?  WHERE id_conclusion = ?',
+      [place_conclusion,doctor,comment, JSON.stringify(type_info), req.params.id],
+      function (error, results, fields) {
+        if (error) throw error;
+       // res.redirect('/carta');
+      }
+  );
+});
+
+
+/*///////////////////////////*/
+router.get('/carta/carta_file/:id', function(req, res, next) {
+  console.log(req.session)
+  if (!req.session.loggedin) {
+    res.redirect('/');
+    return;
+  }
+        connection.query(
+            'SELECT conclusion.type_info as type_info,conclusion.comment as comment,conclusion.place_conclusion as place_conclusion,conclusion.doctor as doctor,conclusion.type_doctor as type_doctor,conclusion.data_conclusion as data_conclusion, conclusion.type_conclusion as type_conclusion, files.file_id as file_id, files.user_id as user_id,files.file_path as file_path,  files.file_type as file_type, conclusion.name_conclusion as name_conclusion FROM files left join conclusion on files.id_conclusion = conclusion.id_conclusion where files.file_id =?',
+            [req.params.id],
+            function (error, results, fields) {
+              console.log(results)
+
+              if (results.length === 0) {
+                res.redirect('carta');
+                return;
+              }
+              if(results[0].user_id!==req.session.user_id){
+                res.redirect('carta');
+
+              }
+              console.log(results[0]['type_info'])
+              res.render('carta_file' , {
+                file: results[0],
+                file_id: req.params.id,
+                name_conclusion: results[0]['name_conclusion'],
+                comment: results[0]['comment'],
+                place_conclusion: results[0]['place_conclusion'],
+                doctor: results[0]['doctor'],
+                type_doctor: results[0]['type_doctor'],
+                data_conclusion: results[0]['data_conclusion'],
+                type_conclusion: results[0]['type_conclusion'],
+                type_info: JSON.parse(results[0]['type_info'])
+              });
+
+            });
+});
+
+
+router.post('/carta/carta_file/:id', function(req, res, next) {
+  // If the user is not logged in, redirect to the home page
+  console.log(req.session)
+  console.log(req.body)
+  if (!req.session.loggedin) {
+    res.redirect('/');
+    return;
+  }
+  if (!req.body.type_doctor) {
+    req.body.type_doctor = null;
+  }
+  if (!req.body.name_conclusion) {
+    req.body.name_conclusion = null;
+  }
+  if (!req.body.place_conclusion) {
+    req.body.place_conclusion = null;
+  }
+  if (!req.body.data_conclusion) {
+    req.body.data_conclusion = null;
+  }
+  if (!req.body.doctor) {
+    req.body.doctor = null;
+  }
+  if (!req.body.comment) {
+    req.body.comment = null;
+  }
+    connection.query(
+        'UPDATE conclusion SET comment=?, doctor=?, data_conclusion=?, place_conclusion=?,type_doctor=? ,name_conclusion = ? WHERE id_conclusion = (SELECT id_conclusion FROM files WHERE file_id = ?)',
+        [req.body.comment,req.body.doctor,req.body.data_conclusion,req.body.place_conclusion,req.body.type_doctor,req.body.name_conclusion, req.params.id],
+        function (error, results, fields) {
+          if (error) throw error;
+          res.redirect('/carta/carta_file/' + req.params.id);
+        }
+    );
 });
 
 module.exports = router;
