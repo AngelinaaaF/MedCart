@@ -20,7 +20,7 @@
         </div>
     </div>
     <div class="button-container">
-    <button onclick="showForm()">Добавить запись</button>
+    <button id="add-record-btn" onclick="toggleForm(); hideAddRecordBtn()">Добавить запись</button>
     </div>
     <div id="upload-form" style="display: none;">
         <form action="/file/upload" method="POST" enctype="multipart/form-data">
@@ -45,8 +45,29 @@
                 <option >Другое</option>
             </select>
             <select name="type_doctor">
-                <option >Аллерголог</option>
-                <option >Реаниматолог</option>
+                <option>Аллерголог</option>
+                <option>Дерматовенеролог</option>
+                <option>Гинеколог</option>
+                <option>Инфекционист</option>
+                <option>Кардиолог</option>
+                <option>Нарколог</option>
+                <option>Невропатолог</option>
+                <option>Отоларинголог</option>
+                <option>Офтальмолог</option>
+                <option>Онколог</option>
+                <option>Педиатр</option>
+                <option>Психиатр</option>
+                <option>Пульмонолог</option>
+                <option>Рентгенолог</option>
+                <option>Реаниматолог</option>
+                <option>Скорая Неотложная помощь</option>
+                <option>Стоматолог</option>
+                <option>СудМедЭксперт</option>
+                <option>Терапевт</option>
+                <option>Травмотолог/Ортопед</option>
+                <option>Уролог</option>
+                <option>Эпидемиолог</option>
+                <option>Другое</option>
             </select>
             <label for="data_conclusion">Дата заключения:</label>
             <input type="date" name="data_conclusion" placeholder="dd-mm-yyyy"  pattern="\d{4}-\d{2}-\d{2}">
@@ -59,13 +80,12 @@
             </div>
         </form>
     </div>
-
     <div id="gallery">
         <% files.forEach(function(file) { %>
             <div class="file">
                 <% if(file.file_type==='png'||file.file_type==='jpeg'||file.file_type==='jpg')
                 { %>
-                    <a href="/carta/carta_file/<%= file.file_id %>"  rel="noopener noreferrer">
+                    <a href="/carta/carta_file/<%= file.id_conclusion %>"  rel="noopener noreferrer">
                         <img src="<%= file.file_path %>" alt="<%= file.name_conclusion %>" />
                     </a>
                     <% } else if (file.file_type==='pdf') { %>
@@ -80,35 +100,35 @@
                 <div class="file-name"><%= file.name_conclusion %></div>
             </div>
         <% }); %>
-
     </div>
-
-    <script>
-        const gallery = document.querySelector('#gallery');
+   <script>
+        const gallery_selector = document.querySelector('#gallery');
         const files = <%= JSON.stringify(files) %>;
 
         files.forEach(function(file) {
-            const fileDiv = gallery.querySelector(`[alt="${file.name}"]`);
+            const fileDiv = gallery_selector.querySelector(`[alt="${file.name}"]`);
             if(fileDiv) {
                 fileDiv.parentNode.removeChild(fileDiv);
             }
         });
     </script>
+
     <script>
-        function showForm() {
-            document.getElementById("upload-form").style.display = "block";
+        var addRecordBtn = document.getElementById("add-record-btn");
+        var gallery = document.getElementById("gallery");
+        var form = document.getElementById("upload-form");
+
+        function toggleForm() {
+            form.style.display = form.style.display === "none" ? "block" : "none";
+            gallery.style.display = gallery.style.display === "none" ? "block" : "none";
+            addRecordBtn.style.display = "none";
         }
         function hideForm() {
-            document.getElementById("upload-form").style.display = "none";
+            form.style.display = "none";
+            gallery.style.display = "block";
+            addRecordBtn.style.display = "block";
+            form.reset(); // добавляем эту строку для очистки формы
         }
-        const addFileBtn = document.querySelector('#add-file-btn');
-        const addFileForm = document.querySelector('#add-file-form');
-        const closeAddFileBtn = document.querySelector('#close-add-file-btn');
-        addFileBtn.addEventListener('click', () => {
-            addFileForm.style.display = 'block';
-        });
-        closeAddFileBtn.addEventListener('click', () => {
-            addFileForm.style.display = 'none';});
     </script>
 </div>
 

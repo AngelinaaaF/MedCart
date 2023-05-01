@@ -41,6 +41,7 @@
                 <input type="tel" name="phone" placeholder="8 ___ ___ __ __" value="<%= number_phone %>">
             </div>
                 <button type="submit">Save Changes</button>
+               <button id="delete-button" type="button">Удалить аккаунт</button>
         </form>
     </div>
 
@@ -85,6 +86,30 @@
                     .catch(error => console.error(error));
             });
         </script>
+    <script>
+        const deleteButton = document.getElementById('delete-button');
+        deleteButton.addEventListener('click', function() {
+            // Выводим диалоговое окно для подтверждения удаления
+            const confirmed = confirm('Вы действительно хотите удалить аккаунт со всеми данными?');
+            if (confirmed) {
+                // Если пользователь подтвердил удаление, отправляем запрос на сервер
+                const xhr = new XMLHttpRequest();
+                xhr.open('POST', '/delete_profile', true);
+                xhr.setRequestHeader('Content-Type', 'application/json');
+                xhr.onreadystatechange = function() {
+                    console.log(xhr.readyState)
+                    if (xhr.readyState === 4 && xhr.status === 200) {
+                        alert('удалено!');
+                        window.location.reload();
+                        return;
+                    } else if (xhr.readyState === 4 && xhr.status !== 200) {
+                        alert('Ошибка удаления записи!');
+                    }
+                };
+                xhr.send(JSON.stringify({ user_id: "<%=user_id%>" }));
+            }
+        });
+    </script>
 </div>
 <!--end wrap-->
 </body>

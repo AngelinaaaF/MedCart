@@ -22,30 +22,8 @@
     <div class="info-user">
         <form id="conclusion-form" method="post" action="/carta/carta_file/<%= file_id %>">
             <label for="name"> <%=type_conclusion%></label>
-            <label for="name_conclusion">Название</label>
-            <input type="text" name="name_conclusion" value="<%=name_conclusion%>" readonly>
-            <label for="type_doctor">Доктор:</label>
-            <select name="type_doctor" readonly>
-                <option > <%=type_doctor%> </option>
-                <option >Аллерголог</option>
-                <option >Реаниматолог</option>
-            </select>
-            <label for="place_conclusion">Место</label>
-            <input type="text" name="place_conclusion" value="<%=place_conclusion%>" readonly>
-            <label for="doctor">Врач</label>
-            <input type="text" name="doctor" value="<%=place_conclusion%>" readonly>
-            <label for="data_conclusion">Дата заключения:</label>
-            <input type="date" name="data_conclusion" placeholder="dd-mm-yyyy" value="<%=place_conclusion%>" pattern="\d{4}-\d{2}-\d{2}" readonly>
-            <label for="comment">Комментарии</label>
-            <input type="text" name="comment" value="<%=comment%>" readonly>
-
-            <% if ( "conclusion" in type_info) {%>
-                <label for="conclusion">Number</label>
-                <input type="text" name="conclusion" value="<%=type_info['conclusion']%>" readonly>
-            <%}%>
             <div class="file">
-                <% if(file.file_type==='png'||file.file_type==='jpeg'||file.file_type==='jpg')
-                { %>
+                <% if(file.file_type==='png'||file.file_type==='jpeg'||file.file_type==='jpg') { %>
                     <img src="/<%= file.file_path %>" />
                 <% } else if (file.file_type==='pdf') { %>
                     <img data-pdf-thumbnail-file=<%= file.file_path %> width="100%" height="600px"/>
@@ -56,12 +34,121 @@
                         <a class="fa fa-file">Скачать</a>
                     </div>
                 <% } %>
-                <div class="file-name"><a href="/carta/carta_file/<%= file.file_id %>" target="_blank" rel="noopener noreferrer"><%= file.name_conclusion %></a>
-                </div>
             </div>
-            <button id="edit-button" type="button">Редактировать</button>
-            <button id="save-button" type="submit" style="display: none;">Сохранить изменения</button>
 
+            <div class="overlay"></div>
+
+            <div class="modal">
+                <img src="">
+                <div class="close-btn">Закрыть</div>
+            </div>
+            <label for="name_conclusion">Название</label>
+            <input type="text" name="name_conclusion" value="<%=name_conclusion%>" readonly>
+            <label for="type_doctor">Доктор:</label>
+            <select name="type_doctor" readonly>
+                <option > <%=type_doctor%> </option>
+                <option>Аллерголог</option>
+                <option>Дерматовенеролог</option>
+                <option>Гинеколог</option>
+                <option>Инфекционист</option>
+                <option>Кардиолог</option>
+                <option>Нарколог</option>
+                <option>Невропатолог</option>
+                <option>Отоларинголог</option>
+                <option>Офтальмолог</option>
+                <option>Онколог</option>
+                <option>Педиатр</option>
+                <option>Психиатр</option>
+                <option>Пульмонолог</option>
+                <option>Рентгенолог</option>
+                <option>Реаниматолог</option>
+                <option>Скорая Неотложная помощь</option>
+                <option>Стоматолог</option>
+                <option>СудМедЭксперт</option>
+                <option>Терапевт</option>
+                <option>Травмотолог/Ортопед</option>
+                <option>Уролог</option>
+                <option>Эпидемиолог</option>
+                <option>Другое</option>
+            </select>
+            <label for="place_conclusion">Место</label>
+            <input type="text" name="place_conclusion" value="<%=place_conclusion%>" readonly>
+            <label for="doctor">Врач</label>
+            <input type="text" name="doctor" value="<%=place_conclusion%>" readonly>
+            <label for="data_conclusion">Дата заключения:</label>
+            <input type="date" name="data_conclusion" placeholder="dd-mm-yyyy" value="<%=place_conclusion%>" pattern="\d{4}-\d{2}-\d{2}" readonly>
+            <label for="comment">Комментарии</label>
+            <input type="text" name="comment" value="<%=comment%>" readonly>
+            <% if ( "conclusion" in type_info) {%>
+                <label for="conclusion">Заключение</label>
+                <input type="text" name="conclusion" value="<%=type_info['conclusion']%>" readonly>
+            <%}%>
+            <% if ( "code" in type_info) {%>
+            <label for="code">Название/Код</label>
+            <input type="text" name="code" value="<%=type_info['code']%>" readonly>
+            <%}%>
+            <% if ( "diagnosis" in type_info) {%>
+            <label for="diagnosis">Диагноз</label>
+            <input type="text" name="diagnosis" value="<%=type_info['diagnosis']%>" readonly>
+            <%}%>
+            <% if ( "complaints" in type_info) {%>
+            <label for="complaints">Жалобы</label>
+            <input type="text" name="complaints" value="<%=type_info['complaints']%>" readonly>
+            <%}%>
+            <% if ( "anamnez" in type_info) {%>
+            <label for="anamnez">Анамнез</label>
+            <input type="text" name="anamnez" value="<%=type_info['anamnez']%>" readonly>
+            <%}%><% if ( "prescription" in type_info) {%>
+            <label for="prescription">Назначение рецепта</label>
+            <input type="text" name="prescription" value="<%=type_info['prescription']%>" readonly>
+            <%}%>
+            <% if ( "area" in type_info) {%>
+            <label for="area">Область</label>
+            <input type="text" name="area" value="<%=type_info['area']%>" readonly>
+            <%}%>
+            <% if ( "purpose" in type_info) {%>
+            <label for="purpose">Цель</label>
+            <input type="text" name="purpose" value="<%=type_info['purpose']%>" readonly>
+            <%}%>
+            <% if ( "todoctor" in type_info) {%>
+            <label for="todoctor">к какому врачу</label>
+            <input type="text" name="todoctor" value="<%=type_info['todoctor']%>" readonly>
+            <%}%>
+            <% if ( "justification" in type_info) {%>
+            <label for="justification">Обоснование направления</label>
+            <input type="text" name="justification" value="<%=type_info['justification']%>" readonly>
+            <%}%>
+            <% if ( "cameto" in type_info) {%>
+            <label for="cameto">Явиться к</label>
+            <input type="text" name="cameto" value="<%=type_info['cameto']%>" readonly>
+            <%}%>
+            <% if ( "date_starting" in type_info) {%>
+            <label for="date_starting">Дата с</label>
+            <input type="text" name="date_starting" value="<%=type_info['date_starting']%>" readonly>
+            <%}%>
+            <% if ( "date_finish" in type_info) {%>
+            <label for="date_finish">Дата по</label>
+            <input type="text" name="date_finish" value="<%=type_info['date_finish']%>" readonly>
+            <%}%>
+            <% if ( "allergen" in type_info) {%>
+            <label for="allergen">Аллерген</label>
+            <input type="text" name="allergen" value="<%=type_info['allergen']%>" readonly>
+            <%}%>
+            <% if ( "reaction" in type_info) {%>
+            <label for="reaction">Реакция</label>
+            <input type="text" name="reaction" value="<%=type_info['reaction']%>" readonly>
+            <%}%>
+            <% if ( "medication" in type_info) {%>
+            <label for="medication">Препарат</label>
+            <input type="text" name="medication" value="<%=type_info['medication']%>" readonly>
+            <%}%>
+            <% if ( "dose" in type_info) {%>
+            <label for="dose">Доза препарата</label>
+            <input type="text" name="dose" value="<%=type_info['dose']%>" readonly>
+            <%}%>
+            <button id="edit-button" type="button">Редактировать</button>
+            <button id="delete-button" type="button">Удалить запись</button>
+            <button id="save-button" type="submit" style="display: none;">Сохранить изменения</button>
         </form>
     </div>
 </div>
@@ -70,25 +157,67 @@
 <script>
     const editButton = document.getElementById('edit-button');
     const saveButton = document.getElementById('save-button');
-    const conclusionInput = document.querySelector('input[name="name_conclusion"], ' +
-        'select[name="type_doctor"], input[name="place_conclusion"]');
-
+    const conclusionInputs = document.querySelectorAll('input[name="name_conclusion"], select[name="type_doctor"], input[name="place_conclusion"], input[name="doctor"], input[name="comment"], input[name="code"], input[name="diagnosis"], input[name="complaints"], input[name="anamnez"], input[name="conclusion"], input[name="prescription"], input[name="area"], input[name="purpose"], input[name="todoctor"], input[name="justification"], input[name="cameto"], input[name="number"], input[name="date_starting"], input[name="date_finish"], input[name="allergen"], input[name="reaction"], input[name="medication"], input[name="dose"]');
 
     // Обработчик нажатия кнопки "Редактировать"
     editButton.addEventListener('click', () => {
         editButton.style.display = 'none';
         saveButton.style.display = 'block';
-        conclusionInput.removeAttribute('readonly');
+        conclusionInputs.forEach(input => input.removeAttribute('readonly'));
     });
 
     // Обработчик отправки формы
     document.getElementById('conclusion-form').addEventListener('submit', () => {
         editButton.style.display = 'block';
         saveButton.style.display = 'none';
-        conclusionInput.setAttribute('readonly', '');
+        conclusionInputs.forEach(input => input.setAttribute('readonly', ''));
+    });
+
+</script>
+<script>
+    const fileImages = document.querySelectorAll('.file img');
+    const overlay = document.querySelector('.overlay');
+    const modal = document.querySelector('.modal');
+    const modalImage = document.querySelector('.modal img');
+    const closeBtn = document.querySelector('.close-btn');
+
+    fileImages.forEach((image) => {
+        image.addEventListener('click', () => {
+            modalImage.src = image.src;
+            overlay.style.display = 'block';
+            modal.style.display = 'block';
+        });
+    });
+
+    closeBtn.addEventListener('click', () => {
+        overlay.style.display = 'none';
+        modal.style.display = 'none';
     });
 </script>
-
+<script>
+    const deleteButton = document.getElementById('delete-button');
+    deleteButton.addEventListener('click', function() {
+        // Выводим диалоговое окно для подтверждения удаления
+        const confirmed = confirm('Вы действительно хотите удалить запись?');
+        if (confirmed) {
+            // Если пользователь подтвердил удаление, отправляем запрос на сервер
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST', '/delete_record', true);
+            xhr.setRequestHeader('Content-Type', 'application/json');
+            xhr.onreadystatechange = function() {
+                console.log(xhr.readyState)
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    alert('Запись удалена успешно!');
+                    // Обновляем страницу после удаления
+                    window.location.reload();
+                } else if (xhr.readyState === 4 && xhr.status !== 200) {
+                    alert('Ошибка удаления записи!');
+                }
+            };
+            xhr.send(JSON.stringify({ id_conclusion: "<%=id_conclusion%>" }));
+        }
+    });
+</script>
 </body>
 <!--end cache-images-->
 </html>
