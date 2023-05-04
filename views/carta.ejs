@@ -21,7 +21,74 @@
     </div>
     <div class="button-container">
     <button id="add-record-btn" onclick="toggleForm(); hideAddRecordBtn()">Добавить запись</button>
-    </div>
+    <button class="filter-btn" data-filter-value="" onclick="window.location.href='/carta'">Без фильтра</button>
+    <div class="sort-wrapper">
+            <button class="sort-btn">Сортировка</button>
+            <div class="sort-dropdown">
+                <ul class="sort-list">
+                    <li>
+                        <a href="#">По названию</a>
+                        <ul class="sub-sort-list">
+                           <button onclick="setSort('name_conclusion')">A-Z</button>
+                            <li><button onclick="setSort('name_conclusion','1')">Z-A</button></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="#">По дате</a>
+                        <ul class="sub-sort-list">
+                            <li><button onclick="setSort('data_conclusion')">Новые-старые</button></li>
+                            <li><button onclick="setSort('data_conclusion','1')">Старые-новые</button></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="#">По доктору</a>
+                        <ul class="sub-sort-list">
+                            <li><button onclick="setSort('type_doctor')" >А-Я</button></li>
+                            <li><button onclick="setSort('type_doctor','1')">Я-А</button></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div>
+            <button class="filter-btn" onclick="setFilter('Анализы')">Анализы</button>
+            <button class="filter-btn" onclick="setFilter('Аллергия')">Аллергия</button>
+            <button class="filter-btn" onclick="setFilter('Консультация')">Консультация</button>
+            <button class="filter-btn" onclick="setFilter('Плановый прием')">Плановый прием</button>
+            <button class="filter-btn" onclick="setFilter('Прививка')">Прививка</button>
+            <button class="filter-btn" onclick="setFilter('Флюрография')">Флюрография</button>
+            <button class="filter-btn" onclick="setFilter('Заключение врача')">Заключение врача</button>
+            <button class="filter-btn" onclick="setFilter('Рентген')">Рентген</button>
+            <button class="filter-btn" onclick="setFilter('Справка')">Справка</button>
+            <button class="filter-btn" onclick="setFilter('МРТ')">МРТ</button>
+            <button class="filter-btn" onclick="setFilter('КТ')">КТ</button>
+            <button class="filter-btn" onclick="setFilter('Стоматология')">Стоматология</button>
+            <button class="filter-btn" onclick="setFilter('УЗИ')">УЗИ</button>
+            <button class="filter-btn" onclick="setFilter('Хроническое заболевание')">Хроническое заболевание</button>
+            <button class="filter-btn" onclick="setFilter('Направления')">Направления</button>
+            <button class="filter-btn" onclick="setFilter('Другое')">Другое</button>
+        </div>
+
+    <script>
+        function setFilter(filterValue) {
+            const params = new URLSearchParams(window.location.search);
+            params.set('filter_by', 'type_conclusion');
+            params.set('filter_value', filterValue);
+            const newUrl = `${window.location.pathname}?${params.toString()}`;
+            window.location.href = newUrl;
+
+        }
+        function setSort(sortBy,revers) {
+            const params = new URLSearchParams(window.location.search);
+            params.set('sorted_by', sortBy);
+            if (revers){
+                params.set('revers', revers);
+            }
+            const newUrl = `${window.location.pathname}?${params.toString()}`;
+            window.location.href = newUrl;
+
+        }
+    </script>
     <div id="upload-form" style="display: none;">
         <form action="/file/upload" method="POST" enctype="multipart/form-data">
             <label for="name_conclusion">Название документа:</label>
@@ -70,7 +137,7 @@
                 <option>Другое</option>
             </select>
             <label for="data_conclusion">Дата заключения:</label>
-            <input type="date" name="data_conclusion" placeholder="dd-mm-yyyy"  pattern="\d{4}-\d{2}-\d{2}">
+            <input type="date" name="data_conclusion" placeholder="dd-mm-yyyy"  pattern="\d{4}-\d{2}-\d{2}" required>
             <label for="file">Файл для загрузки:</label>
             <input type="file" name="filedata" id="file" required>
             <br>
@@ -130,6 +197,20 @@
             form.reset(); // добавляем эту строку для очистки формы
         }
     </script>
+    <script>
+        const buttons = document.querySelectorAll('.filter-btn');
+
+        // При нажатии на кнопку
+        buttons.forEach(button => {
+            button.addEventListener('click', function() {
+                // Убираем класс "active" у всех кнопок
+                buttons.forEach(btn => btn.classList.remove('active'));
+                // Добавляем класс "active" только нажатой кнопке
+                this.classList.add('active');
+            });
+        });
+    </script>
+
 </div>
 
 <!--end wrap-->

@@ -219,7 +219,7 @@ body{
 	flex-direction: column;
 	justify-content: center;
 	align-items: center;
-	margin-top: 50px;
+	margin-top: 20px;
 }
 .login-btn, .register-btn {
 	display: inline-block;
@@ -379,26 +379,177 @@ select {
 	display: none;
 }
 
+
+/* стили для модального окна */
+/* стили для модального окна */
 .modal {
-	position: fixed;
-	top: 50%;
-	left: 50%;
-	transform: translate(-50%, -50%);
-	z-index: 9999;
-	background-color: #fff;
+	flex-wrap: wrap;
+	display: none; /* скрыто по умолчанию */
+	position: fixed; /* фиксированное положение */
+	z-index: 1; /* на переднем плане */
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: 100%;
+	overflow: auto; /* добавление прокрутки, если содержимое больше размеров окна */
+	background-color: rgba(0, 0, 0, 0.4); /* полупрозрачный фон */
+}
+
+/* стили для контейнера формы */
+.modal-content {
+	background-color: #fefefe; /* фон контейнера */
+	margin: 15% auto; /* расположение контейнера по центру экрана */
 	padding: 20px;
-	border-radius: 5px;
-	display: none;
+	border: 1px solid #888;
+	width: 80%; /* ширина контейнера */
+	max-width: 500px; /* максимальная ширина контейнера */
+	box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.3); /* тень контейнера */
 }
 
-.modal img {
-	max-width: 100%;
-	height: auto;
+/* стили для кнопки закрытия модального окна */
+.close {
+	color: #aaa;
+	float: right;
+	font-size: 28px;
+	font-weight: bold;
 }
 
-.close-btn {
-	position: absolute;
-	top: 10px;
-	right: 10px;
+.close:hover,
+.close:focus {
+	color: black;
+	text-decoration: none;
 	cursor: pointer;
+}
+
+/* стили для полей формы */
+label {
+	display: block;
+	margin-bottom: 10px;
+	font-weight: bold;
+}
+
+input[type="text"] {
+	width: 100%;
+	padding: 10px;
+	border: 1px solid #ccc;
+	border-radius: 4px;
+	box-sizing: border-box;
+	margin-bottom: 20px;
+}
+
+button {
+	background-color: rgba(111, 152, 187, 0.5);
+	border: none;
+	border-radius: 6px;
+	color: #333333;
+	cursor: pointer;
+	font-size: 14px;
+	margin-right: 10px;
+	margin-bottom: 10px;
+	padding: 10px 15px;
+	transition: background-color 0.3s ease;
+}
+
+button.filter-btn {
+
+	transition: background-color 0.10s ease;/
+background-color: rgba(111, 152, 187, 0.5);
+	border: none;
+	border-radius: 6px;
+
+	color: #333333;
+	cursor: pointer;
+	font-size: 14px;
+	margin-right: 10px;
+	margin-bottom: 10px;
+	padding: 10px 15px;
+	transition: background-color 0.3s ease;
+}
+
+button.filter-btn.default.active,
+.filter-btn.active {
+	background-color: #007bff;
+	color: #fff;
+}
+
+button.filter-btn:hover:not(.active) {
+	background-color: #f5f5f5;
+}
+.ps{
+
+	margin-left: 100px;
+
+}
+/**********/
+.sort-wrapper {
+	position: relative;
+	display: inline-block;
+}
+
+.sort-btn {
+	background-color: #007bff;
+	color: #fff;
+	border: none;
+	border-radius: 4px;
+	cursor: pointer;
+	padding: 8px 12px;
+}
+
+.sort-dropdown {
+	position: absolute;
+	top: 100%;
+	left: 0;
+	z-index: 1;
+	display: none;
+	min-width: 160px;
+	padding: 8px 0;
+	border-radius: 4px;
+	background-color: #fff;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.sort-list {
+	list-style: none;
+	padding: 0;
+	margin: 0;
+}
+
+.sort-list li {
+	position: relative;
+}
+
+.sort-list li > a {
+	display: block;
+	padding: 8px 16px;
+	text-decoration: none;
+	color: #333;
+}
+
+.sub-sort-list {
+	position: absolute;
+	top: 0;
+	left: 100%;
+	z-index: 2;
+	display: none;
+	min-width: 160px;
+	margin: 0;
+	padding: 8px 0;
+	border-radius: 4px;
+	background-color: #fff;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.sub-sort-list li > a {
+	display: block;
+	padding: 8px 16px;
+	text-decoration: none;
+	color: #333;
+}
+
+.sort-list li:hover > .sub-sort-list {
+	display: block;
+}
+
+.sort-wrapper:hover .sort-dropdown {
+	display: block;
 }

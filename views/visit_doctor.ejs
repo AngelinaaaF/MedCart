@@ -5,21 +5,84 @@
     <meta charset="utf-8">
     <link type="text/css" rel="stylesheet" href="stylesheets/style.css" />
     <link type="text/css" rel="stylesheet" href="stylesheets/skin.css" />
+    <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/fullcalendar.min.css' />
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js'></script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/fullcalendar.min.js'></script>
 </head>
 <body class="home">
 <div id="wrap">
-    <div id="header"> <img src="images/logo.png" />
+    <div id="header"> <img src="/images/logo.png" />
         <div id="nav">
             <ul class="menu">
                 <li><a href="/home">Главная</a></li>
-                <li><a href="/profile">Профиль</a></li>
+                <li class="current_page_item"><a href="/profile">Профиль</a></li>
                 <li><a href="/carta">Мед.карточка</a></li>
-                <li class="current_page_item"><a href="/visit_doctor">Визит к врачу</a></li>
+                <li><a href="/visit_doctor">Визит к врачу</a></li>
                 <li><a href="/logout">Выйти</a></li>
             </ul>
         </div>
     </div>
+    <button id="add-visit-btn">Добавить запись</button>
+    <div id='calendar'></div>
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <span id="close-modal-btn" class="close">&times;</span>
+            <form id="visit_form" method="post" action="/visit_doctor">                <label for="data_visit">Дата и время приема:</label>
+                <input id="data_visit" name="data_visit" type="datetime-local" required>
+                <label for="name_doctor">Врач:</label>
+                <input id="name_doctor" name="name_doctor" type="text" >
+                <label for="place">Место:</label>
+                <input id="place" name="place" type="text" >
+                <button type="submit">Добавить</button>
+            </form>
+        </div>
+    </div>
 </div>
-<!--end wrap-->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var calendarEl = document.getElementById('calendar');
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+            plugins: [ 'dayGrid' ],
+            events: [
+                { title: 'Визит к врачу', start: '<%=data_visit%>'}
+            ]
+        });
+        calendar.render();
+    });
+</script>
+<script>
+    // получаем кнопку добавления записи
+    const addVisitBtn = document.getElementById('add-visit-btn');
+
+    // получаем модальное окно
+    const modal = document.getElementById('modal');
+
+    // получаем кнопку закрытия модального окна
+    const closeBtn = document.getElementById('close-modal-btn');
+    // добавляем обработчик события клика на кнопку добавления записи
+    addVisitBtn.addEventListener('click', () => {
+        // отображаем модальное окно
+        modal.style.display = 'block';
+    });
+    // добавляем обработчик события клика на кнопку закрытия модального окна
+    closeBtn.addEventListener('click', () => {
+        // скрываем модальное окно
+        modal.style.display = 'none';
+    });
+    // добавляем обработчик события отправки формы
+    const form = document.getElementById('visit-form');
+    form.addEventListener('submit', (event) => {
+        // предотвращаем отправку формы по умолчанию
+        event.preventDefault();
+        // получаем значения полей формы
+        const name_doctor = document.getElementById('name_doctor').value;
+        const place = document.getElementById('place').value;
+        const data_visit = document.getElementById('data_visit').value;
+        // обрабатываем полученные значения
+        // закрываем модальное окно
+        modal.style.display = 'none';
+    });
+
+</script>
 </body>
 </html>

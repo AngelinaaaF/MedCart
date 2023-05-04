@@ -3,10 +3,24 @@ var router = express.Router();
 const mysql = require('mysql');
 const session = require("express-session");
 const multer = require('multer');
+const date = require('date-and-time')
 
 
 router.use(multer({dest:"public/file/upload"}).single("filedata"));
+function formatDate(date) {
 
+  var dd = date.getDate();
+  if (dd < 10) dd = '0' + dd;
+
+  var mm = date.getMonth() + 1;
+  if (mm < 10) mm = '0' + mm;
+
+  var yy ='20'
+  yy += date.getFullYear() % 100;
+  if (date.getFullYear() % 100 < 10) yy = '200' + date.getFullYear() % 100;
+
+  return yy+'-'+mm+'-'+dd;
+}
 function close_session (res,req){
   res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
   res.setHeader('Pragma', 'no-cache');
@@ -22,6 +36,7 @@ function close_session (res,req){
     }
   });}
 function type_inf (req){
+  console.log(req.body)
   let type_info={};
   if(req.body.code !== undefined){
     type_info['code']=req.body.code
@@ -87,7 +102,101 @@ function type_inf (req){
   };
   return type_info;
 };
+/*
+* filter_by - ключ по которому нужен фильтр
+* filter_value - значение для фильтра
+* filter_end - если он есть то он будет концом диапазона, а filter_value будет началом
+* */
+function filter(filter_by, filter_value,filter_end, results){
+  if(filter_by===undefined||filter_value===undefined){
+      return results
+  }
+  let result = []
+  if(filter_end !==undefined){
+    for (let i = 0; i < results.length; i++) {
+      if(results[i][filter_by] === null){
+        continue;
+      }
+      if(new Date(results[i][filter_by]) > (new Date(filter_value)) && (new Date(results[i][filter_by])) < (new Date(filter_end))){
+        result.push(results[i])
+      }
+    }
+    return result
+  }
 
+  for (let i = 0; i < results.length; i++) {
+    if(results[i][filter_by] === undefined){
+      continue;
+    }
+    if(results[i][filter_by] === filter_value){
+      result.push(results[i])
+    }
+  }
+  return result
+}
+// sorted_by - ключ для сортировки, по которому будет по порядка
+function sort(sorted_by,revers, results) {
+  if (sorted_by === undefined) {
+    return results;
+  }
+
+  function compare(a, b) {
+    if (a[sorted_by] === undefined) {
+      return 1;
+    }
+    if (b[sorted_by] === undefined) {
+      return -1;
+    }
+
+    if (sorted_by === 'data_conclusion') {
+      a = new Date(a[sorted_by]);
+      b = new Date(b[sorted_by]);
+    } else {
+      a = a[sorted_by];
+      b = b[sorted_by];
+    }
+
+    if (a < b) {
+      return -1;
+    }
+    if (a > b) {
+      return 1;
+    }
+    return 0;
+  }
+
+  function compare_reverse(a, b) {
+    if (a[sorted_by] === undefined) {
+      return -1;
+    }
+    if (b[sorted_by] === undefined) {
+      return 2;
+    }
+
+    if (sorted_by === 'data_conclusion') {
+      a = new Date(a[sorted_by]);
+      b = new Date(b[sorted_by]);
+    } else {
+      a = a[sorted_by];
+      b = b[sorted_by];
+    }
+
+    if (a < b) {
+      return 1;
+    }
+    if (a > b) {
+      return -1;
+    }
+    return 0;
+  }
+if(revers!==undefined){
+  results.sort(compare_reverse);
+  return results;
+}else {
+  results.sort(compare);
+  return results;
+}
+}
 
 //подключение бд
 const connection = mysql.createConnection({
@@ -118,7 +227,7 @@ router.get('/', function(req, res, next) {
   res.render('index', { title: 'Express' });
 });
 
-const {NULL} = require("mysql/lib/protocol/constants/types");
+const {NULL, NEWDATE} = require("mysql/lib/protocol/constants/types");
 
 router.get('/home', function(req, res, next) {
   // If the user is loggedin
@@ -321,16 +430,23 @@ router.get('/carta', function(req, res, next) {
   if (req.session.loggedin) {
           // Query the database for all files uploaded by the user
           connection.query(
-              'SELECT files.file_path as file_path, files.file_id as file_id,  files.file_type as file_type, conclusion.name_conclusion as name_conclusion, conclusion.id_conclusion as id_conclusion FROM files left join conclusion on files.id_conclusion = conclusion.id_conclusion where files.user_id =?',
+              'SELECT files.file_path as file_path,conclusion.type_doctor as type_doctor, files.file_id as file_id, files.file_type as file_type, conclusion.name_conclusion as name_conclusion, conclusion.type_conclusion as type_conclusion, conclusion.data_conclusion as data_conclusion, conclusion.id_conclusion as id_conclusion FROM files left join conclusion on files.id_conclusion = conclusion.id_conclusion where files.user_id =?',
               [req.session.user_id],
                function (error, results, fields) {
+                 results.forEach(element => {
+                   if(element['data_conclusion']!==undefined && element['data_conclusion']!=null){
+                     element['data_conclusion']=formatDate(element['data_conclusion'])
+                   }
+                 });
 
+                 console.log(error)
                 console.log(results)
                 if (results.length === 0){
                   res.render('carta', {files:[]});
                   return;
                 }
-
+                 results = filter(req.query.filter_by, req.query.filter_value,req.query.filter_end, results)
+                 results = sort(req.query.sorted_by,req.query.revers, results)
                 // Pass the files array to the template
                 res.render('carta', {
                   files: results
@@ -459,7 +575,7 @@ router.post('/file/upload/notedata/:id', function(req, res, next) {
   console.log(req.body)
   console.log("code: ",req.body.code)
   console.log("complaints: ",req.body.complaints)
-  type_inf(req);
+  let type_info=type_inf(req);
   /*********************************************/
   connection.query(
       'UPDATE conclusion SET place_conclusion=?, doctor= ?,comment =? , type_info = ?  WHERE id_conclusion = ?',
@@ -535,8 +651,7 @@ router.post('/carta/carta_file/:id', function(req, res, next) {
   if (!req.body.comment) {
     req.body.comment = null;
   }
-  type_inf(req);
-
+  let type_info=type_inf(req);
   connection.query(
         'UPDATE conclusion SET type_info=?, comment=?, doctor=?, data_conclusion=?, place_conclusion=?,type_doctor=? ,name_conclusion = ? WHERE id_conclusion = ?',
         [JSON.stringify(type_info),req.body.comment,req.body.doctor,req.body.data_conclusion,req.body.place_conclusion,req.body.type_doctor,req.body.name_conclusion, req.params.id],
@@ -550,16 +665,81 @@ router.post('/carta/carta_file/:id', function(req, res, next) {
 
 
 router.get('/visit_doctor', function(req, res, next) {
-  // If the user is loggedin
-  if (req.session.loggedin) {
-    // Output username
-    res.render('visit_doctor');
-  } else {
-    // Not logged in
+  console.log(req.session)
+  if (!req.session.loggedin) {
     res.redirect('/');
+    return;
+  }
+  connection.query(
+      'SELECT * FROM visit where user_id =?',
+      [req.session.user_id],
+      function (error, results, fields) {
+        console.log(results)
+        if (results.length === 0){
+          res.render('visit_doctor', {visit:[]});
+          return;
+        }
+        console.log(req.body)
+        // Pass the files array to the template
+        res.render('visit_doctor', {
+          name_doctor: results[0]['name_doctor'],
+          type_doctor: results[0]['type_doctor'],
+          data_visit: results[0]['data_visit'],
+          name_visit: results[0]['name_visit'],
+          visit_id: results[0]['visit_id'],
+          user_id:[req.session.user_id],
+          place: results[0]['place'],
+          id_conclusion: results[0]['id_conclusion'],
+        });
+      });
+});
+router.post('/visit_doctor', function(req, res, next) {
+  console.log(req.session)
+  if (!req.session.loggedin) {
+    res.redirect('/');
+    return;
+  }
+  if (!req.body.name_visit) {
+    req.body.name_visit = null;
+  }
+  if (!req.body.data_visit) {
+    req.body.data_visit = null;
+  }
+  if (!req.body.type_doctor) {
+    req.body.type_doctor = null;
+  }
+  if (!req.body.name_doctor) {
+    req.body.name_doctor = null;
+  }
+  if (!req.body.place) {
+    req.body.place = null;
+  }
+  if (!req.body.id_conclusion) {
+    req.body.id_conclusion = null;
+  }
+  console.log(req.body)
+  if (req.body.visit_id) {
+    connection.query(
+        'UPDATE visit SET name_visit=?, data_visit=?, type_doctor=?, name_doctor=?, place=?,type_doctor=? ,id_conclusion = ? WHERE visit_id = ?',
+        [req.body.name_visit, req.body.data_visit, req.body.type_doctor, req.body.name_doctor,
+          req.body.place, req.body.type_doctor, req.body.id_conclusion, req.body.visit_id],
+        function (error, results, fields) {
+          if (error) throw error;
+          res.redirect('/visit_doctor');
+        }
+    );
+  }
+  else {
+    connection.query('INSERT INTO visit (user_id, name_visit,data_visit,type_doctor,name_doctor,place,id_conclusion) VALUES (?, ?,?,?, ?,?,?)'
+        , [req.session.user_id, req.body.name_visit, req.body.data_visit, req.body.type_doctor,
+          req.body.name_doctor, req.body.place, req.body.type_doctor, req.body.id_conclusion],
+        function(error, results, fields)
+        {
+          if (error) throw error;
+          res.redirect('/visit_doctor')
+        });
   }
 });
-
 
 module.exports = router;
 
