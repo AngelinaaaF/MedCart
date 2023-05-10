@@ -8,7 +8,9 @@ const date = require('date-and-time')
 
 router.use(multer({dest:"public/file/upload"}).single("filedata"));
 function formatDate(date) {
-
+if (!date){
+  return undefined;
+}
   var dd = date.getDate();
   if (dd < 10) dd = '0' + dd;
 
@@ -197,6 +199,28 @@ if(revers!==undefined){
   return results;
 }
 }
+function search(search_value, results) {
+  if (!search_value)
+  {
+    return results;
+  }
+  let searchResults = [];
+
+  // проходим по каждому элементу в переданном массиве результатов
+  results.forEach(result => {
+    // проверяем, есть ли переданное значение поиска в имени заключения
+    if (result.name_conclusion.toLowerCase().includes(search_value.toLowerCase())) {
+      // если значение найдено, добавляем результат в массив searchResults
+      searchResults.push(result);
+    }
+  });
+
+  // сортируем полученный массив результатов по имени заключения в алфавитном порядке
+  searchResults.sort((a, b) => a.name_conclusion.localeCompare(b.name_conclusion));
+
+  // возвращаем отсортированный массив результатов поиска
+  return searchResults;
+}
 
 //подключение бд
 const connection = mysql.createConnection({
@@ -332,7 +356,7 @@ router.get('/profile', function(req, res, next) {
             name: results[0]['name'],
             surname: results[0]['surname'],
             gender: results[0]['gender'],
-            birthday: results[0]['birthday'],
+            birthday: formatDate(results[0]['birthday']),
             number_phone: results[0]['number_phone'],
             user_id:[req.session.user_id]
           });
@@ -447,7 +471,9 @@ router.get('/carta', function(req, res, next) {
                 }
                  results = filter(req.query.filter_by, req.query.filter_value,req.query.filter_end, results)
                  results = sort(req.query.sorted_by,req.query.revers, results)
-                // Pass the files array to the template
+                 results = search(req.query.search_by, results)
+
+                 // Pass the files array to the template
                 res.render('carta', {
                   files: results
                 });
@@ -617,7 +643,7 @@ router.get('/carta/carta_file/:id', function(req, res, next) {
               place_conclusion: results[0]['place_conclusion'],
               doctor: results[0]['doctor'],
               type_doctor: results[0]['type_doctor'],
-              data_conclusion: results[0]['data_conclusion'],
+              data_conclusion: formatDate(results[0]['data_conclusion']),
               type_conclusion: results[0]['type_conclusion'],
               type_info: JSON.parse(results[0]['type_info']),
               id_conclusion: req.params.id
@@ -684,7 +710,7 @@ router.get('/visit_doctor', function(req, res, next) {
         res.render('visit_doctor', {
           name_doctor: results[0]['name_doctor'],
           type_doctor: results[0]['type_doctor'],
-          data_visit: results[0]['data_visit'],
+          data_visit: formatDate(results[0]['data_visit']),
           name_visit: results[0]['name_visit'],
           visit_id: results[0]['visit_id'],
           user_id:[req.session.user_id],

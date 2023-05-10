@@ -1,4 +1,135 @@
+@import url('https://fonts.cdnfonts.com/css/roboto');
 
+#wrap{
+	margin: 0 auto;
+	max-width: 100%;
+	box-sizing: border-box;
+	display: flex;
+	flex-direction: column;
+}
+#main{
+	padding: 32px;
+	display: flex;
+	justify-content: center;
+	margin-left: 170px; /* ширина #nav + отступ между #nav и #main */
+}
+body{
+	font-family: 'Roboto', sans-serif;
+	font-size: 15px;
+	color: #000000;
+	line-height:24px;
+	margin: 0;
+	padding: 0;
+}
+
+.home{
+	background: rgb(222, 233, 248);
+	width: 100%; }
+
+
+/* ------------ */
+/* -- Header -- */
+/* ------------ */
+#header {
+	height: 100px;
+	width: 100%;
+	padding: 0;
+	background: rgb(255, 255, 255);
+	align-items: center;
+	justify-content: space-between;
+}
+
+#header img {
+	height: 100px;
+	width: 100%;
+}
+
+/* --------- */
+/* -- Nav -- */
+/* --------- */
+#nav {
+	width: 200px;
+	height: 350px;
+	position: fixed;
+	top: 110px;
+	padding: 0;
+	left: 10px;
+	bottom: 0;
+	overflow-x: hidden;
+	background-color: rgb(181, 212, 234);
+	display: flex;
+
+}
+
+
+.menu {
+	list-style-type: none;
+	margin: 0;
+	padding: 20px 0;
+
+}
+/*размер кнопки*/
+.menu li {
+	margin-bottom: 10px;
+	display: flex; /* добавляем display: flex для li */
+	align-items: center; /* выравниваем содержимое по вертикали */
+}
+
+.menu a {
+	display: flex;
+	padding: 6px 8px 6px 16px;
+	color: #282828;
+	text-decoration: none;
+	font-weight: bold;
+}
+
+.nav-item-image {
+	width: 5px;
+	height: 5px;
+	position: fixed	/* добавим небольшой отступ между текстом и изображением */
+}
+
+.menu a:hover {
+	background-color: #f2f6fa;
+}
+
+.menu .current a, .menu li:hover > a{
+	color: #424242;
+}
+.menu ul li:hover a, .menu li:hover li a{
+	color: #727272;
+}
+
+.menu ul{
+	display: flex;
+	background: #3b3b3b;
+	display:none;
+	margin:0;
+	padding:0;
+	width:250px;
+	position:absolute;
+	top:35px;
+	left:20px;
+	border:solid 1px #363636;
+}
+.menu li:hover > ul{
+	display:block;
+}
+.menu ul li{
+	float:none;
+	margin:0;
+	padding:0;
+}
+.menu ul a{
+	font-size:16px;
+}
+.menu ul ul{
+	left:250px;
+	top:-3px;
+}
+.menu li.current_page_item a{
+	color: #050505;
+}
 
 /* СТАЙЛЫ ДЛЯ ВХОДА*/
 form {
@@ -30,47 +161,52 @@ input[type="password"] {
 	box-shadow: 0px 0px 5px 1px rgba(0, 0, 0, 0.1);
 	display: inline-block;
 }
-button[type="submit"] {
-	width: 100px;
-	height: 40px;
-	background-color: #6f98bb;
-	color: white;
-	font-size: 20px;
-	font-weight: bold;
-	border-radius: 5px;
-	border: none;
-	box-shadow: 0px 0px 5px 1px rgba(0, 0, 0, 0.1);
-	cursor: pointer;
-	transition: all 0.3s ease-in-out;
-	margin-top: 20px;
+.button-containerindex{
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	height: 50px;
+	width: 400px;
+	height: 500px;
 }
-button[type="button"] {
-	width: 100px;
-	height: 40px;
-	background-color: #6f98bb;
-	color: white;
-	font-size: 20px;
-	font-weight: bold;
+.btn-index{
+	width: 200px;
+	height: 60px;
+	margin-bottom: 20px;
+	line-height: 60px;
+	text-align: center;
+	text-decoration: none;
+	background: #4676d7;
+	color: #fff;
 	border-radius: 5px;
-	border: none;
-	box-shadow: 0px 0px 5px 1px rgba(0, 0, 0, 0.1);
-	cursor: pointer;
-	transition: all 0.3s ease-in-out;
-	margin-top: 20px;
 }
-button[type="onclick"] {
-	width: 100px;
+.button,.btn{
+	min-width: 100px;
 	height: 40px;
-	background-color: #6f98bb;
-	color: white;
-	font-size: 20px;
-	font-weight: bold;
+	font-family: inherit;
+	appearance: none;
+	border: 0;
 	border-radius: 5px;
-	border: none;
-	box-shadow: 0px 0px 5px 1px rgba(0, 0, 0, 0.1);
+	background: #4676d7;
+	color: #fff;
+	padding: 8px 16px;
+	font-size: 1rem;
 	cursor: pointer;
-	transition: all 0.3s ease-in-out;
-	margin-top: 20px;
+	text-decoration: none;
+
+}
+.button:hover,.btn:hover,.btn-index:hover {
+	background: #1d49aa;
+	text-decoration: none;
+
+}
+
+.button:focus,.btn:focus,.btn-index:hover {
+	outline: none;
+	box-shadow: 0 0 0 4px #cbd6ee;
+	text-decoration: none;
+
 }
 #error-msg {
 	display: block;
@@ -84,116 +220,6 @@ button[type="onclick"] {
 /* -------------------- */
 /* -- General Styles -- */
 /* -------------------- */
-#wrap{
-	margin: 0 auto;
-	max-width: 100%;
-	box-sizing: border-box;
-
-}
-body{
-	font-family:arial, sans-serif;
-	background: linear-gradient(rgba(147, 188, 213, 0.5), #ace5c6);
-	color:#555;
-	line-height:24px;
-	font-size:14px;
-	margin: 0;
-	padding: 0;
-}
-
-.home{
-	background: rgba(202, 212, 220, 0.7);
-	width: 100%; }
-
-
-/* ------------ */
-/* -- Header -- */
-/* ------------ */
-#header {
-	height: 100px;
-	width: 100%;
-	padding: 0;
-	background: rgb(255, 255, 255);
-}
-
-#header img {
-	height: 100px;
-	width: 100%;
-}
-
-/* --------- */
-/* -- Nav -- */
-/* --------- */
-#nav {
-	width: 150px;
-	height: 400px;
-	position: fixed;
-	top: 110px;
-	padding: 0;
-	left: 10px;
-	bottom: 0;
-	overflow-x: hidden;
-	background-color: rgba(111, 152, 187, 0.2);
-}
-
-.menu {
-	list-style-type: none;
-	margin: 0;
-	padding: 20px 0;
-
-}
-/*размер кнопки*/
-.menu li {
-	margin-bottom: 10px;
-}
-
-.menu a {
-	display: block;
-	padding: 6px 8px 6px 16px;
-	color: #646363;
-	text-decoration: none;
-	font-weight: bold;
-}
-
-.menu a:hover {
-	background-color: #6f98bb;
-}
-
-.menu .current a, .menu li:hover > a{
-	color: #424242;
-}
-.menu ul li:hover a, .menu li:hover li a{
-	color: #727272;
-}
-
-.menu ul{
-	background: #3b3b3b;
-	display:none;
-	margin:0;
-	padding:0;
-	width:250px;
-	position:absolute;
-	top:35px;
-	left:20px;
-	border:solid 1px #363636;
-}
-.menu li:hover > ul{
-	display:block;
-}
-.menu ul li{
-	float:none;
-	margin:0;
-	padding:0;
-}
-.menu ul a{
-	font-size:16px;
-}
-.menu ul ul{
-	left:250px;
-	top:-3px;
-}
-.menu li.current_page_item a{
-	color: #050505;
-}
 
 
 
@@ -212,32 +238,6 @@ body{
 	border:1px #ddd solid;
 	padding:10px;
 	color:#ff0000;
-}
-/*кнопки вход-регистраци*/
-.button-container {
-	display: flex;
-	flex-direction: column;
-	justify-content: center;
-	align-items: center;
-	margin-top: 20px;
-}
-.login-btn, .register-btn {
-	display: inline-block;
-	background-color: rgb(111, 152, 187);
-	color: #faf7f7;
-	font-size: 18px;
-	font-weight: bold;
-	padding: 15px 25px;
-	text-decoration: none;
-	border-radius: 20px;
-	transition: all 0.3s ease-in-out;
-	margin-bottom: 20px;
-}
-
-.login-btn:hover, .register-btn:hover {
-	background-color: #ffffff;
-	color: #0c0c0c;
-	border: 2px solid #0a0808;
 }
 /*кнопки вход-регистраци*/
 
@@ -437,44 +437,8 @@ input[type="text"] {
 	margin-bottom: 20px;
 }
 
-button {
-	background-color: rgba(111, 152, 187, 0.5);
-	border: none;
-	border-radius: 6px;
-	color: #333333;
-	cursor: pointer;
-	font-size: 14px;
-	margin-right: 10px;
-	margin-bottom: 10px;
-	padding: 10px 15px;
-	transition: background-color 0.3s ease;
-}
 
-button.filter-btn {
 
-	transition: background-color 0.10s ease;/
-background-color: rgba(111, 152, 187, 0.5);
-	border: none;
-	border-radius: 6px;
-
-	color: #333333;
-	cursor: pointer;
-	font-size: 14px;
-	margin-right: 10px;
-	margin-bottom: 10px;
-	padding: 10px 15px;
-	transition: background-color 0.3s ease;
-}
-
-button.filter-btn.default.active,
-.filter-btn.active {
-	background-color: #007bff;
-	color: #fff;
-}
-
-button.filter-btn:hover:not(.active) {
-	background-color: #f5f5f5;
-}
 .ps{
 
 	margin-left: 100px;
@@ -553,3 +517,84 @@ button.filter-btn:hover:not(.active) {
 .sort-wrapper:hover .sort-dropdown {
 	display: block;
 }
+.filter-dropdown {
+	position: relative;
+	display: inline-block;
+}
+
+.filter-btn {
+	background-color: #f1f1f1;
+	border: none;
+	color: black;
+	padding: 8px 16px;
+	font-size: 16px;
+	cursor: pointer;
+	border-radius: 2px;
+	line-height: 0.8;
+
+}
+
+.filter-options {
+	display: none;
+	position: absolute;
+	top: 100%;
+	left: 0;
+	z-index: 1;
+	background-color: #f9f9f9;
+	min-width: 160px;
+	box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+	border-radius: 5px;
+	padding: 7px;
+}
+
+.filter-options table {
+	width: 100%;
+}
+
+.filter-options td {
+	padding: 2px;
+}
+
+.filter-options button {
+	display: block;
+	width: 100%;
+	background-color: transparent;
+	border: none;
+	text-align: left;
+	font-size: 14px;
+	padding: 5px;
+	cursor: pointer;
+	margin: 5px -5px;
+
+}
+
+.filter-options button:hover {
+	background-color: #ddd;
+}
+
+.show {
+	display: block;
+}
+
+.dropdown {
+	position: relative;
+	display: inline-block;
+}
+
+.dropdown-content {
+	display: none;
+	position: absolute;
+	right: 0;
+	top: 100%;
+	z-index: 1;
+	background-color: rgba(255, 255, 255, 0.8);
+	padding: 10px;
+	border: 1px solid #ccc;
+	border-radius: 5px;
+	box-shadow: 0 3px 5px rgba(0, 0, 0, 0.2);
+}
+
+.dropdown:hover .dropdown-content {
+	display: block;
+}
+
