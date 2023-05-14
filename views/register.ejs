@@ -3,52 +3,113 @@
 <head>
     <title>Медицинска карта пользователя</title>
     <meta charset="utf-8">
-    <link type="text/css" rel="stylesheet" href="stylesheets/style.css" />
-    <link type="text/css" rel="stylesheet" href="stylesheets/skin.css" />
+    <link type="text/css" rel="stylesheet" href="stylesheets/style.css"/>
+    <link type="text/css" rel="stylesheet" href="stylesheets/skin.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.min.css"/>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.all.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
 </head>
 <body class="home">
 <div id="wrap">
-    <div id="header"> <img src="images/logo.png" />
+    <div id="header"><img src="images/logo.png"/>
         <div id="nav">
             <ul class="menu">
-                <li class="current_page_item"><a>Главная</a></li>
-                <li><a href="/profile">Профиль</a></li>
-                <li><a href="/carta">Мед.карточка</a></li>
-                <li><a href="/visit_doctor">Визит к врачу</a></li>
-                <li><a href="/logout">Выйти</a></li>
+                <li class="current_page_item"><a>
+                        <img src="images/main.png" class="nav-item-image"/>
+                        Главная</a></li>
+                <li><a href="/profile">
+                        <img src="images/prof.png" class="nav-item-image"/>
+                        Профиль</a></li>
+                <li><a href="/carta">
+                        <img src="images/edcart.png" class="nav-item-image"/>
+                        Мед.карточка</a></li>
+                <li>
+                    <a href="/visit_doctor">
+                        <img src="images/visitdoc.png" class="nav-item-image"/>
+                        Визит к врачу</a></li>
+                <li>
+                    <a href="/logout">
+                        <img src="images/logout.png" class="nav-item-image"/>
+                        Выйти
+                    </a>
+                </li>
             </ul>
         </div>
         <!--end nav-->
     </div>
-    <div>
+    <div id="main">
         <form action="/register" method="post" onsubmit="return validateRegistration()">
-            <label for="username">Username:</label>
-            <input type="text" id="username" name="username" required><br><br>
-            <div id="username-msg"></div>
-            <label for="password">Password:</label>
-            <input type="password" id="password" name="password" required><br><br>
-            <div id="password-msg"></div>
-            <div class="button-container">
-                <input type="submit" class="register-btn" value="Зарегистрироваться">
+            <div class="logIn">
+                <label for="username" style="display: block">Имя пользователя</label>
+                <input type="text" class="inpLog" id="username" name="username" placeholder="Логин" required>
+                <div id="username-msg"></div>
+                <label for="password">Пароль</label>
+                <div class=password-toggle">
+                    <input type="password" class="PassTogl" name="password" id="password" placeholder="Пароль" required>
+                    <span class="password-toggle" onclick="togglePassword()">
+                 <i class="fa fa-eye"></i>
+                </span>
+                </div>
+                <div id="password-msg"></div>
+                <div class="button-container">
+                    <input type="submit" class="btn" value="Зарегистрироваться">
+                </div>
+                <span id="error-msg"></span>
+                <span id="cussc" ></span>
+                <div id="password-error-msg" style="color: #b61427"></div>
             </div>
-            <span id="error-msg" style="color: red;"></span>
-            <span id="cussc" style="color: red;"></span>
+            <script>
+                function togglePassword() {
+                    var passwordInput = document.getElementById("password");
+                    var passwordToggle = document.querySelector(".password-toggle i");
+                    if (passwordInput.type === "password") {
+                        passwordInput.type = "text";
+                        passwordToggle.classList.remove("fa-eye");
+                        passwordToggle.classList.add("fa-eye-slash");
+                    } else {
+                        passwordInput.type = "password";
+                        passwordToggle.classList.remove("fa-eye-slash");
+                        passwordToggle.classList.add("fa-eye");
+                    }
+                }
 
+            </script>
+            <script>
+                function validatePassword() {
+                    var password = document.getElementById("password").value;
+                    if (password.length < 8) {
+                        document.getElementById("password-error-msg").innerHTML = "Пароль должен содержать как минимум 8 символов";
+                        document.getElementById("username").value = "";
+                        document.getElementById("password").value = "";
+                        return false;
+                    }
+                    return true;
+                }
+            </script>
             <script>
                 function validateRegistration() {
+                    if (!validatePassword()) {
+                        return false;
+                    }
                     var username = document.getElementById("username").value;
                     var password = document.getElementById("password").value;
 
                     var xhr = new XMLHttpRequest();
-                    xhr.onreadystatechange = function() {
-                        if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
-                            document.getElementById("cussc").innerHTML = response.message;
-                        }
-                        else{
-                            var response = JSON.parse(this.responseText);
-                            // Login failed, show error message
-                            document.getElementById("error-msg").innerHTML = response.message;
-                            return false;
+                    xhr.onreadystatechange = function () {
+                        if (this.readyState === XMLHttpRequest.DONE) {
+                            if (this.status === 200) {
+                                var response = JSON.parse(this.responseText);
+                                // Registration successful, show success message
+                                document.getElementById("password-error-msg").innerHTML = "";
+                                document.getElementById("error-msg").innerHTML = "";
+                                document.getElementById("username").value = "";
+                                document.getElementById("password").value = "";
+                                document.getElementById("cussc").innerHTML = response.message;
+                            } else {
+                                var response = JSON.parse(this.responseText);
+                                // Registration failed, show error message
+                                document.getElementById("error-msg").innerHTML = response.message;
+                            }
                         }
                     };
                     xhr.open("POST", "register", true);
@@ -57,8 +118,11 @@
                     return false;
                 }
             </script>
-            <div class="button-container">
-                <a href="/login" class="register-btn">Войти</a>
+            <div class="Reg">
+                </р>Уже есть аккаунт?</p>
+                <div class="button-container">
+                    <a href="/login" class="register-btn">Войти</a>
+                </div>
             </div>
         </form>
 

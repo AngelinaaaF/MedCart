@@ -347,8 +347,8 @@ router.get('/profile', function(req, res, next) {
   if (req.session.loggedin)
   {
     connection.query(
-        'SELECT * FROM info_users WHERE id = ?',
-        [req.session.user_id],
+        'SELECT * FROM info_users join info_user_med WHERE info_users.id = ? and info_user_med.id=?',
+        [req.session.user_id,req.session.user_id],
         function (error, results, fields) {
           if (error) throw error;
 
@@ -358,7 +358,12 @@ router.get('/profile', function(req, res, next) {
             gender: results[0]['gender'],
             birthday: formatDate(results[0]['birthday']),
             number_phone: results[0]['number_phone'],
-            user_id:[req.session.user_id]
+            user_id:[req.session.user_id],
+            number_polis: results[0]['number_polis'],
+            chronic_diseases: results[0]['chronic_diseases'],
+            type_blood: results[0]['type_blood'],
+            allergy: results[0]['allergy'],
+            insurance_company: results[0]['insurance_company']
           });
         }
     );
@@ -369,62 +374,82 @@ router.get('/profile', function(req, res, next) {
 });
 
 router.post('/profile', function(req, res, next) {
-
+  if (!req.session.loggedin) {
+    res.redirect('/');
+    return;
+  }
   var name = req.body.name;
   var surname = req.body.surname;
   var gender = req.body.gender;
   var birthday = req.body.birthday;
   var number_phone = req.body.number_phone;
   var user_id = req.session.user_id;
+  var number_polis = req.body.number_polis;
+  var chronic_diseases = req.body.chronic_diseases;
+  var type_blood = req.body.type_blood;
+  var allergy = req.body.allergy;
+  var insurance_company = req.body.insurance_company;
   console.log(req.body)
-
-  if (req.session.loggedin) {
     if (!number_phone) {
       number_phone = null;
     }
     else {
       const phoneRegex = /^[0-9]{11}$/;
-      const number_phone = req.body.number_phone;
       if (!phoneRegex.test(number_phone)) {
         // Invalid phone number, send an alert message and redirect back to profile page
         res.send('{"error":"Номер телефона введен некорректно"}')
-        return;}
+        return;
+      }
     }
+  if (!name) {
+    name = null;
   }
-  var query = 'UPDATE info_users SET';
-  var params = [];
-  if (name) {
-    query += ' name = ?,';
-    params.push(name);
+  if (!surname) {
+    surname = null;
   }
-  if (surname) {
-    query += ' surname = ?,';
-    params.push(surname);
+  if (!gender) {
+    gender = null;
   }
-  if (gender) {
-    query += ' gender = ?,';
-    params.push(gender);
+  if (!birthday) {
+    birthday = null;
   }
-  if (birthday) {
-    query += ' birthday = ?,';
-    params.push(birthday);
+  if (!number_polis) {
+    number_polis = null;
   }
-  if (number_phone) {
-    query += ' number_phone = ?,';
-    params.push(number_phone);
+  if (!chronic_diseases) {
+    chronic_diseases = null;
   }
-
-  query = query.slice(0, -1) + ' WHERE id = ?';
-  params.push(user_id);
-
-  connection.query(query, params, function (error, results, fields) {
-    if (error) {
-      console.error(error);
-      res.status(500).send('Error updating profile');
-    } else {
-      res.redirect('/profile');
-    }
-  });
+  if (!type_blood) {
+    type_blood = null;
+  }
+  if (!allergy) {
+    allergy = null;
+  }
+  if (!insurance_company) {
+    insurance_company = null;
+  }
+  console.log(req.body)
+  /****/
+      connection.query( 'UPDATE info_users SET name=?, surname= ?,gender =? , birthday = ? , number_phone=? WHERE id = ?',
+          [name,surname,gender, birthday, number_phone, user_id],
+          function (error, results, fields) {
+            if (error) {
+          console.error(error);
+          res.status(500).send('Error updating profile');
+        } else {
+          connection.query( 'UPDATE info_user_med SET number_polis=?, chronic_diseases= ?,type_blood =? , allergy = ? , insurance_company=? WHERE id = ?',
+              [number_polis,chronic_diseases,type_blood, allergy, insurance_company, user_id],
+              function (error, results, fields) {
+                if (error) {
+                  console.log(req.body)
+                  console.error(error);
+                  res.status(500).send('Error updating profile');
+                } else {
+                  res.redirect('/profile');
+                }
+              });
+        }
+      });
 });
 
 router.post('/delete_profile', (req, res) => {

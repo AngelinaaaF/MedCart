@@ -4,6 +4,7 @@
     <title>Медицинска карта пользователя</title>
     <meta charset="utf-8">
     <link type="text/css" rel="stylesheet" href="stylesheets/style.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
     <link type="text/css" rel="stylesheet" href="stylesheets/skin.css" />
 </head>
 <body class="home">
@@ -11,28 +12,50 @@
     <div id="header"> <img src="images/logo.png" />
         <div id="nav">
             <ul class="menu">
-                <li class="current_page_item"><a>Главная</a></li>
-                <li><a href="/profile">Профиль</a></li>
-                <li><a href="/carta">Мед.карточка</a></li>
-                <li><a href="/visit_doctor">Визит к врачу</a></li>
-                <li><a href="/logout">Выйти</a></li>
+                <li class="current_page_item"><a>
+                        <img src="images/main.png" class="nav-item-image"/>
+                        Главная</a></li>
+                <li><a href="/profile">
+                        <img src="images/prof.png" class="nav-item-image"/>
+                        Профиль</a></li>
+                <li><a href="/carta">
+                        <img src="images/edcart.png" class="nav-item-image"/>
+                        Мед.карточка</a></li>
+                <li>
+                    <a href="/visit_doctor">
+                        <img src="images/visitdoc.png" class="nav-item-image"/>
+                        Визит к врачу</a></li>
+                <li>
+                    <a href="/logout">
+                        <img src="images/logout.png" class="nav-item-image"/>
+                        Выйти
+                    </a>
+                </li>
             </ul>
         </div>
         <!--end nav-->
     </div>
     <!--end header-->
 
-    <div>
+    <div id="main">
         <form action="login" method="post" onsubmit="return validateLogin()">
+            <h2 style="margin-bottom: 10px; text-align: center; ">Вход в личный кабинет</h2>
+            <hr style="width: 100%;border-bottom: 3px solid #8bb9d5;margin-bottom: 20px;">
+            <div class="logIn">
             <div>
-                <label for="username" >
+                <label for="username"  style="display: block">
                     Логин
                 </label>
-                <input type="text" name="username" id="username" placeholder="Логин" autocomplete="username" required>
+                <input type="text" class="inpLog" name="username" id="username" placeholder="Логин" autocomplete="username" required>
             </div>
             <div class="form-group">
                 <label >Пароль</label>
-                <input type="password" name="password" id="password" value=""  placeholder="Пароль"  required>
+                <div class=password-toggle">
+                    <input type="password" class="PassTogl" name="password" id="password" placeholder="Пароль" required>
+                    <span class="password-toggle" onclick="togglePassword()">
+                 <i class="fa fa-eye"></i>
+                </span>
+                </div>
             </div>
             <div class="button-container">
                 <button type="submit" class="btn">Войти</button>
@@ -62,15 +85,32 @@
 
                     return false;
                 }
-
             </script>
-            <p>Нет аккаунта?</p>
+            </div>
+            <div class="Reg">
+            </р>Нет аккаунта?</p>
             <div class="button-container">
-                <a href="/register" class="btn">Зарегистрироваться</a>
+                <a href="/register" >Зарегистрироваться</a>
+            </div>
             </div>
         </form>
     </div>
+    <script>
+        function togglePassword() {
+            var passwordInput = document.getElementById("password");
+            var passwordToggle = document.querySelector(".password-toggle i");
+            if (passwordInput.type === "password") {
+                passwordInput.type = "text";
+                passwordToggle.classList.remove("fa-eye");
+                passwordToggle.classList.add("fa-eye-slash");
+            } else {
+                passwordInput.type = "password";
+                passwordToggle.classList.remove("fa-eye-slash");
+                passwordToggle.classList.add("fa-eye");
+            }
+        }
 
+    </script>
     <!--end footer-->
 </div>
 <!--end wrap-->

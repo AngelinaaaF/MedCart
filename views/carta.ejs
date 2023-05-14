@@ -3,409 +3,103 @@
 <head>
     <title>Медицинска карта пользователя</title>
     <meta charset="utf-8">
-    <link type="text/css" rel="stylesheet" href="stylesheets/style.css"/>
-    <link type="text/css" rel="stylesheet" href="stylesheets/skin.css"/>
+    <link type="text/css" rel="stylesheet" href="/stylesheets/style.css"/>
+    <link type="text/css" rel="stylesheet" href="/stylesheets/skin.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.min.css"/>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.all.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/js/standalone/selectize.min.js" integrity="sha256-+C0A5Ilqmu4QcSPxrlGpaZxJ04VjsRjKu+G82kl5UJk=" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/css/selectize.bootstrap3.min.css" integrity="sha256-ze/OEYGcFbPRmvCnrSeKbRTtjG4vGLHXgOqsyLFTRjg=" crossorigin="anonymous" />
+
 </head>
 <body class="home">
 <div id="wrap">
     <div id="header"><img src="images/logo.png"/>
         <div id="nav">
             <ul class="menu">
-                <li><a href="/home">Главная</a></li>
-                <li><a href="/profile">Профиль</a></li>
-                <li class="current_page_item"><a href="/carta">Мед.карточка</a></li>
-                <li><a href="/visit_doctor">Визит к врачу</a></li>
-                <li><a href="/logout">Выйти</a></li>
+                <li><a href="/home">
+                        <img src="images/main.png" class="nav-item-image"/>
+                        Главная</a></li>
+                <li ><a href="/profile">
+                        <img src="images/prof.png" class="nav-item-image"/>
+                        Профиль</a></li>
+                <li class="current_page_item"><a href="/carta">
+                        <img src="images/edcart.png" class="nav-item-image"/>
+                        Мед.карточка</a></li>
+                <li>
+                    <a href="/visit_doctor">
+                        <img src="images/visitdoc.png" class="nav-item-image"/>
+                        Визит к врачу</a></li>
+                <li>
+                    <a href="/logout">
+                        <img src="images/logout.png" class="nav-item-image"/>
+                        Выйти
+                    </a>
+                </li>
             </ul>
         </div>
     </div>
-    <div class="button-container">
-        <button id="add-record-btn" onclick="toggleForm(); hideAddRecordBtn()">Добавить запись</button>
-        <label for="myInput">Поиск по имени:</label>
-        <input type="text" id="myInput" list="myOptions" autocomplete="off" onkeydown="if (event.keyCode == 13) Search()">
-        <datalist id="myOptions">
-            <% files.forEach(function(file) { %>
-            <option value="<%= file.name_conclusion %>">
-            </option>
-            <% }); %>
-        </datalist>
-        <div class="filterandsort">
-        <button class="filter-btn" data-filter-value="" onclick="window.location.href='/carta'">Без фильтра</button>
-        <div class="sort-wrapper">
-            <button class="sort-btn">Сортировка</button>
-            <div class="sort-dropdown">
-                <ul class="sort-list">
-                    <li>
-                        <a href="#">По названию</a>
-                        <ul class="sub-sort-list">
-                            <button onclick="setSort('name_conclusion')">A-Z</button>
-                            <li>
-                                <button onclick="setSort('name_conclusion','1')">Z-A</button>
-                            </li>
-                        </ul>
-                    </li>
-                    <li>
-                        <a href="#">По дате</a>
-                        <ul class="sub-sort-list">
-                            <li>
-                                <button onclick="setSort('data_conclusion')">Новые-старые</button>
-                            </li>
-                            <li>
-                                <button onclick="setSort('data_conclusion','1')">Старые-новые</button>
-                            </li>
-                            <li>
-                                <div class="dropdown">
-                                    <button class="dropbtn" onmouseover="showDateRangePicker()">Дата от_до_</button>
-                                    <div id="date-range-picker" class="dropdown-content" style="display: none;">
-                                        <input id="date-from" type="date">
-                                        <input id="date-to" type="date">
-                                        <button onclick="FromTo( document.getElementById('date-from').value, document.getElementById('date-to').value)">
-                                            Применить
-                                        </button>
-                                    </div>
-                                </div>
-                            </li>
-                        </ul>
-                    </li>
-                    </li>
-                    <li>
-                        <a href="#">По доктору</a>
-                        <ul class="sub-sort-list">
-                            <li>
-                                <button onclick="setSort('type_doctor')">А-Я</button>
-                            </li>
-                            <li>
-                                <button onclick="setSort('type_doctor','1')">Я-А</button>
-                            </li>
-                            <li>
-                                <div class="dropdown">
-                                    <button class="filter-btn" onmouseover=" showDoctorFilter()">Выбрать доктора
-                                    </button>
-                                    <div class="filter-options" id="doctor-filter" style="display: none;">
-                                        <table>
-                                            <tr>
-                                                <td>
-                                                    <button class="filter-btn" onclick="setFilter('Аллерголог')">
-                                                        Аллерголог
-                                                    </button>
-                                                </td>
-                                                <td>
-                                                    <button class="filter-btn" onclick="setFilter('Дерматовенеролог')">
-                                                        Дерматовенеролог
-                                                    </button>
-                                                </td>
-                                                <td>
-                                                    <button class="filter-btn" onclick="setFilter('Гинеколог')">
-                                                        Гинеколог
-                                                    </button>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>
-                                                    <button class="filter-btn" onclick="setFilter('Инфекционист')">
-                                                        Инфекционист
-                                                    </button>
-                                                </td>
-                                                <td>
-                                                    <button class="filter-btn" onclick="setFilter('Кардиолог')">
-                                                        Кардиолог
-                                                    </button>
-                                                </td>
-                                                <td>
-                                                    <button class="filter-btn" onclick="setFilter('Нарколог')">
-                                                        Нарколог
-                                                    </button>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>
-                                                    <button class="filter-btn" onclick="setFilter('Невропатолог')">
-                                                        Невропатолог
-                                                    </button>
-                                                </td>
-                                                <td>
-                                                    <button class="filter-btn" onclick="setFilter('Отоларинголог')">
-                                                        Отоларинголог
-                                                    </button>
-                                                </td>
-                                                <td>
-                                                    <button class="filter-btn" onclick="setFilter('Офтальмолог')">
-                                                        Офтальмолог
-                                                    </button>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>
-                                                    <button class="filter-btn" onclick="setFilter('Онколог')">Онколог
-                                                    </button>
-                                                </td>
-                                                <td>
-                                                    <button class="filter-btn" onclick="setFilter('Педиатр')">Педиатр
-                                                    </button>
-                                                </td>
-                                                <td>
-                                                    <button class="filter-btn" onclick="setFilter('Психиатр')">
-                                                        Психиатр
-                                                    </button>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>
-                                                    <button class="filter-btn" onclick="setFilter('Пульмонолог')">
-                                                        Пульмонолог
-                                                    </button>
-                                                </td>
-                                                <td>
-                                                    <button class="filter-btn" onclick="setFilter('Рентгенолог')">
-                                                        Рентгенолог
-                                                    </button>
-                                                </td>
-                                                <td>
-                                                    <button class="filter-btn" onclick="setFilter('Реаниматолог')">
-                                                        Реаниматолог
-                                                    </button>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>
-                                                    <button class="filter-btn"
-                                                            onclick="setFilter('Скорая Неотложная помощь')">Скорая
-                                                        Неотложная помощь
-                                                    </button>
-                                                </td>
-                                                <td>
-                                                    <button class="filter-btn" onclick="setFilter('Стоматолог')">
-                                                        Стоматолог
-                                                    </button>
-                                                </td>
-                                                <td>
-                                                    <button class="filter-btn" onclick="setFilter('СудМедЭксперт')">
-                                                        СудМедЭксперт
-                                                    </button>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>
-                                                    <button class="filter-btn" onclick="setFilter('Терапевт')">
-                                                        Терапевт
-                                                    </button>
-                                                </td>
-                                                <td>
-                                                    <button class="filter-btn"
-                                                            onclick="setFilter('Травмотолог/Ортопед')">
-                                                        Травмотолог/Ортопед
-                                                    </button>
-                                                </td>
-                                                <td>
-                                                    <button class="filter-btn" onclick="setFilter('Уролог')">Уролог
-                                                    </button>
-                                                </td>
-                                                <td>
-                                                    <button class="filter-btn" onclick="setFilter('Эпидемиолог')">
-                                                        Эпидемиолог
-                                                    </button>
-                                                </td>
-                                                <td>
-                                                    <button class="filter-btn" onclick="setFilter('Другое')">Другое
-                                                    </button>
-                                                </td>
-                                            </tr>
-                                        </table>
-                                    </div>
-                                </div>
-                            </li>
-                        </ul>
-                    </li>
-                </ul>
+    <div id="mainCarta">
+        <div id="MainBut">
+            <div class="plusnote" style="display: flex;margin-bottom: 10px; align-items: center;">
+            <h2 style="margin-left: 30px; text-align: left; ">Медицинская карта</h2>
+                <button id="add-record-btn"  onclick="toggleForm(); hideAddRecordBtn()">
+                <img src="images/addconcluc.png" class="add-item-image"/> Добавить запись
+                </button>
             </div>
-        </div>
-        <div class="filter-dropdown">
-            <button class="filter-btn" onclick="toggleFilterDropdown()">Фильтр</button>
-            <div class="filter-options" id="type_filter">
-                <table>
-                    <tr>
-                        <td>
-                            <button class="filter-btn" onclick="setFilter('Анализы')">Анализы</button>
-                        </td>
-                        <td>
-                            <button class="filter-btn" onclick="setFilter('Аллергия')">Аллергия</button>
-                        </td>
-                        <td>
-                            <button class="filter-btn" onclick="setFilter('Консультация')">Консультация</button>
-                        </td>
-                        <td>
-                            <button class="filter-btn" onclick="setFilter('Плановый прием')">Плановый прием</button>
-                        </td>
-                        <td>
-                            <button class="filter-btn" onclick="setFilter('Прививка')">Прививка</button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <button class="filter-btn" onclick="setFilter('Флюрография')">Флюрография</button>
-                        </td>
-                        <td>
-                            <button class="filter-btn" onclick="setFilter('Заключение врача')">Заключение врача</button>
-                        </td>
-                        <td>
-                            <button class="filter-btn" onclick="setFilter('Рентген')">Рентген</button>
-                        </td>
-                        <td>
-                            <button class="filter-btn" onclick="setFilter('Справка')">Справка</button>
-                        </td>
-                        <td>
-                            <button class="filter-btn" onclick="setFilter('МРТ')">МРТ</button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <button class="filter-btn" onclick="setFilter('КТ')">КТ</button>
-                        </td>
-                        <td>
-                            <button class="filter-btn" onclick="setFilter('Стоматология')">Стоматология</button>
-                        </td>
-                        <td>
-                            <button class="filter-btn" onclick="setFilter('УЗИ')">УЗИ</button>
-                        </td>
-                        <td>
-                            <button class="filter-btn" onclick="setFilter('Хроническое заболевание')">Хроническое
-                                заболевание
-                            </button>
-                        </td>
-                        <td>
-                            <button class="filter-btn" onclick="setFilter('Направления')">Направления</button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <button class="filter-btn" onclick="setFilter('Другое')">Другое</button>
-                        </td>
-                    </tr>
-                </table>
+            <hr style="width: 100%;border-bottom: 2px solid #8bb9d5;">
+            <div class="find" id="myInput">
+                <select name="nameInput" placeholder="Поиск по названию" autocomplete="off" >
+                    <option value=""selected disabled>Выберите название</option>
+                <% files.forEach(function(file) { %>
+                        <option value="<%= file.name_conclusion %>"><%= file.name_conclusion %></option>
+                    <% }); %>
+                </select>
             </div>
+            <script>
+                $(document).ready(function() {
+                    var $select = $('#myInput select').selectize({
+                        sortField: 'text',
+                        create: false,
+                        onInitialize: function() {
+                            var self = this;
+                            this.$control.on('keydown', 'input', function(event) {
+                                if (event.keyCode === 13) {
+                                    event.preventDefault();
+                                    var value = self.$input.val();
+                                    Search(value);
+                                }
+                            });
+                        }
+                    });
+                });
+            </script>
         </div>
+<div id="filt-and-no">
+    <button class="filter-btn-no" onclick="window.location.href='/carta'">Без фильтра</button>
+                        <button class="filter-btn" onclick="setFilter('Анализы')">Анализы</button>
+                        <button class="filter-btn" onclick="setFilter('Аллергия')">Аллергия</button>
+                        <button class="filter-btn" onclick="setFilter('Консультация')">Консультация</button>
+                        <button class="filter-btn" onclick="setFilter('Плановый прием')">Плановый прием</button>
+                        <button class="filter-btn" onclick="setFilter('Прививка')">Прививка</button>
+                        <button class="filter-btn" onclick="setFilter('Флюрография')">Флюрография</button>
+                        <button class="filter-btn" onclick="setFilter('Заключение врача')">Заключение врача</button>
+                        <button class="filter-btn" onclick="setFilter('Рентген')">Рентген</button>
+                        <button class="filter-btn" onclick="setFilter('Справка')">Справка</button>
+                        <button class="filter-btn" onclick="setFilter('МРТ')">МРТ</button>
+                        <button class="filter-btn" onclick="setFilter('КТ')">КТ</button>
+                        <button class="filter-btn" onclick="setFilter('Стоматология')">Стоматология</button>
+        <button class="filter-btn" onclick="setFilter('УЗИ')">УЗИ</button>
+                        <button class="filter-btn" onclick="setFilter('Хроническое заболевание')">Хроническое
+                            заболевание
+                        </button>
+                        <button class="filter-btn" onclick="setFilter('Направления')">Направления</button>
+                        <button class="filter-btn" onclick="setFilter('Другое')">Другое</button>
 
-        <script>
-            function Search() {
-                var search = document.getElementById("myInput");
-                const params = new URLSearchParams(window.location.search);
-                params.set('search_by', search.value);
-                const newUrl = `${window.location.pathname}?${params.toString()}`;
-                window.location.href = newUrl;
-            }
-            function showDoctorFilter() {
-                var doctor_filter = document.getElementById("doctor-filter");
-                if (doctor_filter.style.display === "none") {
-                    doctor_filter.style.display = "block";
-                } else {
-                    doctor_filter.style.display = "none";
-                }
-            }
-
-            function toggleFilterDropdown() {
-                var dropdown = document.getElementById("type_filter");
-                dropdown.classList.toggle("show");
-            }
-
-            function showDateRangePicker() {
-                var dateRangePicker = document.getElementById("date-range-picker");
-                if (dateRangePicker.style.display === "none") {
-                    dateRangePicker.style.display = "block";
-                } else {
-                    dateRangePicker.style.display = "none";
-                }
-            }
-
-            function setFilter(filterValue) {
-                const params = new URLSearchParams(window.location.search);
-                params.set('filter_by', 'type_conclusion');
-                params.set('filter_value', filterValue);
-                const newUrl = `${window.location.pathname}?${params.toString()}`;
-                window.location.href = newUrl;
-
-            }
-
-            function setSort(sortBy, revers) {
-                const params = new URLSearchParams(window.location.search);
-                params.set('sorted_by', sortBy);
-                if (revers) {
-                    params.set('revers', revers);
-                }
-                const newUrl = `${window.location.pathname}?${params.toString()}`;
-                window.location.href = newUrl;
-
-            }
-
-            function FromTo(filterValue, filterEnd) {
-                const params = new URLSearchParams(window.location.search);
-                params.set('filter_by', 'data_conclusion');
-                params.set('filter_value', filterValue);
-                params.set('filter_end', filterEnd);
-                const newUrl = `${window.location.pathname}?${params.toString()}`;
-                window.location.href = newUrl;
-
-            }
-        </script>
-
-        <div id="upload-form" style="display: none;">
-            <form action="/file/upload" method="POST" enctype="multipart/form-data">
-                <label for="name_conclusion">Название документа:</label>
-                <input type="text" name="name_conclusion" required>
-                <select name="type_conclusion">
-                    <option>Анализы</option>
-                    <option>Аллергия</option>
-                    <option>Заключение врача</option>
-                    <option>Консультация</option>
-                    <option>Направления</option>
-                    <option>Плановый прием</option>
-                    <option>Прививка</option>
-                    <option>Рентген</option>
-                    <option>Справка</option>
-                    <option>Стоматология</option>
-                    <option>Флюрография</option>
-                    <option>Хроническое заболевание</option>
-                    <option>МРТ</option>
-                    <option>КТ</option>
-                    <option>УЗИ</option>
-                    <option>Другое</option>
-                </select>
-                <select name="type_doctor">
-                    <option>Аллерголог</option>
-                    <option>Дерматовенеролог</option>
-                    <option>Гинеколог</option>
-                    <option>Инфекционист</option>
-                    <option>Кардиолог</option>
-                    <option>Нарколог</option>
-                    <option>Невропатолог</option>
-                    <option>Отоларинголог</option>
-                    <option>Офтальмолог</option>
-                    <option>Онколог</option>
-                    <option>Педиатр</option>
-                    <option>Психиатр</option>
-                    <option>Пульмонолог</option>
-                    <option>Рентгенолог</option>
-                    <option>Реаниматолог</option>
-                    <option>Скорая Неотложная помощь</option>
-                    <option>Стоматолог</option>
-                    <option>СудМедЭксперт</option>
-                    <option>Терапевт</option>
-                    <option>Травмотолог/Ортопед</option>
-                    <option>Уролог</option>
-                    <option>Эпидемиолог</option>
-                    <option>Другое</option>
-                </select>
-                <label for="data_conclusion">Дата заключения:</label>
-                <input type="date" name="data_conclusion" placeholder="dd-mm-yyyy" pattern="\d{4}-\d{2}-\d{2}" required>
-                <label for="file">Файл для загрузки:</label>
-                <input type="file" name="filedata" id="file" required>
-                <br>
-                <div class="button-container">
-                    <input type="submit" value="Продолжить">
-                    <button type="button" onclick="hideForm()">Закрыть</button>
-                </div>
-            </form>
         </div>
-        </div>
+<div id="galery-sort">
         <div id="gallery">
             <% files.forEach(function(file) { %>
                 <div class="file" >
@@ -428,62 +122,380 @@
                 </div>
             <% }); %>
         </div>
-        <script>
-            const gallery_selector = document.querySelector('#gallery');
-            const files = <%= JSON.stringify(files) %>;
+        <div class="sort-wrapper">
 
-            files.forEach(function (file) {
-                const fileDiv = gallery_selector.querySelector(`[alt="${file.name}"]`);
-                if (fileDiv) {
-                    fileDiv.parentNode.removeChild(fileDiv);
+            <p style="text-align: left; margin: 10px 0px 5px 15px;">Сортировать</p>
+            <div class="sort-one">
+                <a  href="#" id="sort-link" class="sort-btn">
+                    <img img src="images/sort-icon.png" class="nav-item-image-sort"/>
+                    <span class="sort-btn-text">По названию</span>
+                </a>
+                <ul class="sub-sort-list" id="sort-dropdown">
+                    <button class="butonforsort" onclick="setSort('name_conclusion')">По возрастанию</button>
+                    <button class="butonforsort" onclick="setSort('name_conclusion','1')">По убыванию</button>
+                </ul>
+            </div>
+            <div class="sort-two">
+                <a  href="#" id="sort-link-data" class="sort-btn">
+                    <img img src="images/sort-icon.png" class="nav-item-image-sort"/>
+                    <span class="sort-btn-text">По дате</span>
+                </a>
+                <ul class="sub-sort-list" id="sort-dropdown-data">
+                    <button class="butonforsort" onclick="setSort('data_conclusion')">Новые-старые</button>
+                    <button class="butonforsort" onclick="setSort('data_conclusion','1')">Старые-новые</button>
+                </ul>
+            </div>
+            <div class="sort-doc">
+                        <a  href="#" id="sort-link-doc" class="sort-btn">
+                            <img img src="images/sort-icon.png" class="nav-item-image-sort"/>
+                            <span class="sort-btn-text">По доктору</span>
+                        </a>
+                        <ul class="sub-sort-list" id="sort-dropdown-doc">
+                            <button class="butonforsort" onclick="setSort('type_doctor')">А-Я</button>
+                            <button class="butonforsort" onclick="setSort('type_doctor','1')">Я-А</button>
+                        </ul>
+                    </div>
+
+            <hr style="width: 90%;border-bottom: 2px solid #8bb9d5;">
+            <p style="text-align: left; margin: 0px 0px 5px 15px ;">Поиск по диапазону</p>
+            <div class="find-date">
+                <a  href="#" id="sort-link-owdata" class="sort-btn">
+                    <img img src="images/icon-find-data.png" class="nav-item-image-data"/>
+                    <span class="sort-btn-text">Ввести даты</span>
+                </a>
+                <ul class="sub-sort-list" id="sort-dropdown-owdata">
+                    <input id="date-from"  type="date" class="butonforsort">
+                    <input id="date-to" type="date" class="butonforsort">
+                    <button class="butonok" onclick="FromTo( document.getElementById('date-from').value, document.getElementById('date-to').value)">
+                        Применить
+                    </button>
+                </ul>
+            </div>
+
+            <hr style="width: 90%;border-bottom: 2px solid #8bb9d5;">
+            <p style="text-align: left; margin: 0px 0px 5px 15px ;">Поиск по доктору</p>
+            <div class="find-typedoc">
+                <a  href="#" id="sort-link-typedoc" class="sort-btn">
+                    <img img src="images/icon-for-doc.png" class="nav-item-image-data"/>
+                    <span class="sort-btn-text">Выбрать доктора</span>
+                </a>
+                <ul class="sub-sort-list-typedoc" id="sort-dropdown-typedoc">
+                    <button class="butonforsortdoc" onclick="setFilter('Аллерголог')">
+                        Аллерголог
+                    </button>
+                    <button class="butonforsortdoc" onclick="setFilter('Дерматовенеролог')">
+                        Дерматовенеролог
+                    </button>
+                    <button class="butonforsortdoc" onclick="setFilter('Гинеколог')">
+                        Гинеколог
+                    </button>
+                    <button class="butonforsortdoc"  onclick="setFilter('Инфекционист')">
+                        Инфекционист
+                    </button>
+                    <button class="butonforsortdoc"  onclick="setFilter('Кардиолог')">
+                        Кардиолог
+                    </button>
+                    <button class="butonforsortdoc" onclick="setFilter('Нарколог')">
+                        Нарколог
+                    </button>
+                    <button class="butonforsortdoc"  onclick="setFilter('Невропатолог')">
+                        Невропатолог
+                    </button>
+                    <button class="butonforsortdoc"  onclick="setFilter('Отоларинголог')">
+                        Отоларинголог
+                    </button>
+                    <button class="butonforsortdoc"  onclick="setFilter('Офтальмолог')">
+                        Офтальмолог
+                    </button>
+                    <button class="butonforsortdoc"  onclick="setFilter('Онколог')">Онколог
+                    </button>
+                    <button class="butonforsortdoc"  onclick="setFilter('Педиатр')">Педиатр
+                    </button>
+                    <button class="butonforsortdoc"  onclick="setFilter('Психиатр')">
+                        Психиатр
+                    </button>
+                    <button class="butonforsortdoc"  onclick="setFilter('Пульмонолог')">
+                        Пульмонолог
+                    </button>
+                    <button class="butonforsortdoc"  onclick="setFilter('Рентгенолог')">
+                        Рентгенолог
+                    </button>
+                    <button class="butonforsortdoc"  onclick="setFilter('Реаниматолог')">
+                        Реаниматолог
+                    </button>
+                    <button class="butonforsortdoc"
+                            onclick="setFilter('Скорая Неотложная помощь')">Скорая
+                        Неотложная помощь
+                    </button>
+                    <button class="butonforsortdoc"  onclick="setFilter('Стоматолог')">
+                        Стоматолог
+                    </button>
+                    <button class="butonforsortdoc"  onclick="setFilter('СудМедЭксперт')">
+                        СудМедЭксперт
+                    </button>
+                    <button class="butonforsortdoc"  onclick="setFilter('Терапевт')">
+                        Терапевт
+                    </button>
+                    <button class="butonforsortdoc"
+                            onclick="setFilter('Травмотолог/Ортопед')">
+                        Травмотолог/Ортопед
+                    </button>
+                    <button class="butonforsortdoc"  onclick="setFilter('Уролог')">Уролог
+                    </button>
+                    <button class="butonforsortdoc"  onclick="setFilter('Эпидемиолог')">
+                        Эпидемиолог
+                    </button>
+                    <button class="butonforsortdoc"  onclick="setFilter('Другое')">Другое
+                    </button>
+                </ul>
+            </div>
+
+        </div>
+    </div>
+        <div id="upload-form" style="display: none;">
+        <form action="/file/upload" method="POST" enctype="multipart/form-data">
+            <div class="info-concl">
+            <h2 style="text-align: left; margin: 15px 0px 15px 30px ;">Добавление новой записи</h2>
+
+            <hr style="width: 100%;border-bottom: 2px solid #8bb9d5; margin-bottom: 20px;">
+            <div class="profileField">
+            <label for="name_conclusion" class="profileLabel">Название документа:</label>
+            <input type="text" class="profileInput" name="name_conclusion" required>
+            </div>
+            <div class="typetwo">
+            <select name="type_conclusion">
+                <option disabled selected>Выберите тип записи</option>
+                <option>Анализы</option>
+                <option>Аллергия</option>
+                <option>Заключение врача</option>
+                <option>Консультация</option>
+                <option>Направления</option>
+                <option>Плановый прием</option>
+                <option>Прививка</option>
+                <option>Рентген</option>
+                <option>Справка</option>
+                <option>Стоматология</option>
+                <option>Флюрография</option>
+                <option>Хроническое заболевание</option>
+                <option>МРТ</option>
+                <option>КТ</option>
+                <option>УЗИ</option>
+                <option>Другое</option>
+            </select>
+            <select name="type_doctor" style="margin-left: 20px">
+                <option disabled selected>Выберите специальность врача</option>
+                <option>Аллерголог</option>
+                <option>Дерматовенеролог</option>
+                <option>Гинеколог</option>
+                <option>Инфекционист</option>
+                <option>Кардиолог</option>
+                <option>Нарколог</option>
+                <option>Невропатолог</option>
+                <option>Отоларинголог</option>
+                <option>Офтальмолог</option>
+                <option>Онколог</option>
+                <option>Педиатр</option>
+                <option>Психиатр</option>
+                <option>Пульмонолог</option>
+                <option>Рентгенолог</option>
+                <option>Реаниматолог</option>
+                <option>Скорая Неотложная помощь</option>
+                <option>Стоматолог</option>
+                <option>СудМедЭксперт</option>
+                <option>Терапевт</option>
+                <option>Травмотолог/Ортопед</option>
+                <option>Уролог</option>
+                <option>Эпидемиолог</option>
+                <option>Другое</option>
+            </select>
+            </div>
+            <div class="profileField">
+            <label for="data_conclusion" class="profileLabel" style="margin-top:5px; " >Дата заключения:</label>
+            <input type="date" class="profileInput" style="margin-top:7px;"  name="data_conclusion" placeholder="dd-mm-yyyy" pattern="\d{4}-\d{2}-\d{2}" required>
+            </div>
+            <div class="profileField">
+            <label for="file" class="profileLabel" >Файл для загрузки:</label>
+            <input type="file" class="Photoinp" name="filedata" id="file" required>
+
+            </div>
+                <div class="button-container" style="justify-content: space-around; margin-right: 20px">
+                    <button type="button" class="btn-cont" style="display: flex; align-items: center;" onclick="hideForm()">
+                        <img src="images/suda.png" style="margin-right: 5px;" class="add-item-image-cont"/>
+                        Закрыть
+                    </button>
+
+                    <button type="submit" class="btn-cont" style="display: flex; align-items: center;">
+                        Продолжить
+                        <img src="images/tuda.png" class="add-item-image-cont" style="margin-left: 5px;"/>
+                    </button>
+
+
+                </div>
+                </div>
+        </form>
+    </form>
+    </div>
+    <script>
+    const gallery_selector = document.querySelector('#gallery');
+    const files = <%= JSON.stringify(files) %>;
+
+    files.forEach(function (file) {
+        const fileDiv = gallery_selector.querySelector(`[alt="${file.name}"]`);
+        if (fileDiv) {
+            fileDiv.parentNode.removeChild(fileDiv);
+        }
+    });
+
+</script>
+<script>
+    var addRecordBtn = document.getElementById("add-record-btn");
+    var gallery = document.getElementById("MainBut");
+    var form = document.getElementById("upload-form");
+    var myInput = document.getElementById("filt-and-no");
+    var filterandsort = document.getElementById("galery-sort");
+
+
+    function toggleForm() {
+        form.style.display = form.style.display === "none" ? "block" : "none";
+        gallery.style.display = gallery.style.display === "none" ? "block" : "none";
+        addRecordBtn.style.display = "none";
+        myInput.style.display = myInput.style.display === "none" ? "block" : "none";
+        filterandsort.style.display = filterandsort.style.display === "none" ? "block" : "none";
+
+    }
+
+    function hideForm() {
+        form.style.display = "none";
+        gallery.style.display = "block";
+        addRecordBtn.style.display = "block";
+        myInput.style.display = "block"
+        filterandsort.style.display = "block"
+        form.reset(); // добавляем эту строку для очистки формы
+    }
+</script>
+<script>
+    const buttons = document.querySelectorAll('.filter-btn');
+
+    // При нажатии на кнопку
+    buttons.forEach(button => {
+        button.addEventListener('click', function () {
+            // Убираем класс "active" у всех кнопок
+            buttons.forEach(btn => btn.classList.remove('active'));
+            // Добавляем класс "active" только нажатой кнопке
+            this.classList.add('active');
+        });
+    });
+</script>
+    <script>
+        function Search(value) {
+            const params = new URLSearchParams(window.location.search);
+            params.set('search_by', value);
+            const newUrl = `${window.location.pathname}?${params.toString()}`;
+            window.location.href = newUrl;
+            const selectizeControl = $('#myInput select')[0].selectize;
+            selectizeControl.clear();
+        }
+        /*подсчевиваем кнопку где сейчас пользователь*/
+        const params = new URLSearchParams(window.location.search);
+        const filterValue = params.get('filter_value');
+        // добавляем класс "active" к кнопке с соответствующим значением
+        if (filterValue) {
+            const buttons = document.querySelectorAll('.filter-btn');
+            buttons.forEach((button) => {
+                if (button.innerText === filterValue) {
+                    button.classList.add('active');
                 }
             });
+        }
+        else{
+            const buttonNoFilter = document.querySelector('.filter-btn-no');
+            buttonNoFilter.classList.add('active');
+        }
 
-        </script>
-        <script>
-            var addRecordBtn = document.getElementById("add-record-btn");
-            var gallery = document.getElementById("gallery");
-            var form = document.getElementById("upload-form");
-            var myInput = document.getElementById("myInput");
-            var filterandsort = document.getElementById("filterandsort");
+        function setFilter(filterValue) {
+            const params = new URLSearchParams(window.location.search);
+            params.set('filter_by', 'type_conclusion');
+            params.set('filter_value', filterValue);
+            const newUrl = `${window.location.origin}${window.location.pathname}?${params.toString()}`;
 
+            window.location.href = newUrl;
+        }
 
-            function toggleForm() {
-                form.style.display = form.style.display === "none" ? "block" : "none";
-                gallery.style.display = gallery.style.display === "none" ? "block" : "none";
-                addRecordBtn.style.display = "none";
-                myInput.style.display = myInput.style.display === "none" ? "block" : "none";
-                filterandsort.style.display = filterandsort.style.display === "none" ? "block" : "none";
-
+        function setSort(sortBy, revers) {
+            const params = new URLSearchParams(window.location.search);
+            params.set('sorted_by', sortBy);
+            if (revers) {
+                params.set('revers', revers);
             }
+            const newUrl = `${window.location.pathname}?${params.toString()}`;
+            window.location.href = newUrl;
+        }
 
-            function hideForm() {
-                form.style.display = "none";
-                gallery.style.display = "block";
-                addRecordBtn.style.display = "block";
-                myInput.style.display = "block"
-                filterandsort.style.display = "block"
+        function FromTo(filterValue, filterEnd) {
+            const params = new URLSearchParams(window.location.search);
+            params.set('filter_by', 'data_conclusion');
+            params.set('filter_value', filterValue);
+            params.set('filter_end', filterEnd);
+            const newUrl = `${window.location.pathname}?${params.toString()}`;
+            window.location.href = newUrl;
 
-                form.reset(); // добавляем эту строку для очистки формы
+        }
+    </script>
+    <script>
+        const sortLinkdoc = document.getElementById("sort-link-doc");
+        const sortDropdowndoc = document.getElementById("sort-dropdown-doc");
+
+        sortLinkdoc.addEventListener("click", function () {
+            if (sortDropdowndoc.style.display === "block") {
+                sortDropdowndoc.style.display = "none";
+            } else {
+                sortDropdowndoc.style.display = "block";
             }
-        </script>
-        <script>
-            const buttons = document.querySelectorAll('.filter-btn');
+        });
 
-            // При нажатии на кнопку
-            buttons.forEach(button => {
-                button.addEventListener('click', function () {
-                    // Убираем класс "active" у всех кнопок
-                    buttons.forEach(btn => btn.classList.remove('active'));
-                    // Добавляем класс "active" только нажатой кнопке
-                    this.classList.add('active');
-                });
-            });
-        </script>
+        const sortLink = document.getElementById("sort-link");
+        const sortDropdown = document.getElementById("sort-dropdown");
 
-    </div>
-</div>
-<!--end wrap-->
+        sortLink.addEventListener("click", function () {
+            if (sortDropdown.style.display === "block") {
+                sortDropdown.style.display = "none";
+            } else {
+                sortDropdown.style.display = "block";
+            }
+        });
+        const sortLinkowdata = document.getElementById("sort-link-owdata");
+        const sortDropdownowdata = document.getElementById("sort-dropdown-owdata");
+
+        sortLinkowdata.addEventListener("click", function () {
+            if (sortDropdownowdata.style.display === "block") {
+                sortDropdownowdata.style.display = "none";
+            } else {
+                sortDropdownowdata.style.display = "block";
+            }
+        });
+
+            const sortLinktypedoc = document.getElementById("sort-link-typedoc");
+            const sortDropdowntypedoc = document.getElementById("sort-dropdown-typedoc");
+
+            sortLinktypedoc.addEventListener("click", function () {
+            if (sortDropdowntypedoc.style.display === "block") {
+            sortDropdowntypedoc.style.display = "none";
+        } else {
+            sortDropdowntypedoc.style.display = "block";
+        }
+        });
+        const sortLinkdata = document.getElementById("sort-link-data");
+        const sortDropdowndata = document.getElementById("sort-dropdown-data");
+
+        sortLinkdata.addEventListener("click", function () {
+            if (sortDropdowndata.style.display === "block") {
+                sortDropdowndata.style.display = "none";
+            } else {
+                sortDropdowndata.style.display = "block";
+            }
+        });
+    </script>
+
 </body>
 
 <!--end cache-images-->

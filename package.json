@@ -6,6 +6,7 @@
     "start": "node ./bin/www"
   },
   "dependencies": {
+    "@selectize/selectize": "^0.15.2",
     "body-parser": "^1.20.2",
     "cookie-parser": "~1.4.4",
     "date-and-time": "^3.0.0",

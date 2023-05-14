@@ -11,50 +11,116 @@
     <div id="header"> <img src="images/logo.png" />
         <div id="nav">
             <ul class="menu">
-                <li><a href="/home">Главная</a></li>
-                <li class="current_page_item"><a href="/profile">Профиль</a></li>
-                <li><a href="/carta">Мед.карточка</a></li>
-                <li><a href="/visit_doctor">Визит к врачу</a></li>
-                <li><a href="/logout">Выйти</a></li>
+                <li><a href="/home">
+                        <img src="images/main.png" class="nav-item-image"/>
+                        Главная</a></li>
+                <li class="current_page_item"><a href="/profile">
+                        <img src="images/prof.png" class="nav-item-image"/>
+                        Профиль</a></li>
+                <li><a href="/carta">
+                        <img src="images/edcart.png" class="nav-item-image"/>
+                        Мед.карточка</a></li>
+                <li>
+                    <a href="/visit_doctor">
+                        <img src="images/visitdoc.png" class="nav-item-image"/>
+                        Визит к врачу</a></li>
+                <li>
+                    <a href="/logout">
+                        <img src="images/logout.png" class="nav-item-image"/>
+                        Выйти
+                    </a>
+                </li>
             </ul>
         </div>
+    </div >
+    <div id="ProfileMain">
+        <div class="info-user">
+            <form method="post" id="profile-form" action="/profile">
+            <h3 style="margin-bottom: 5px; text-align: center; ">Персональные данные</h3>
+            <hr style="width: 100%;border-bottom: 2px solid #8bb9d5;">
+            <div class="gender-container">
+                <label><input type="radio" name="gender" value="male" <%= gender === 'male' ? 'checked' : '' %>>Мужчина</label>
+                <label><input type="radio" name="gender" value="female" <%= gender === 'female' ? 'checked' : '' %>>Женщина</label>
+            </div>
+            <div class="profileField">
+            <label for="name" class="profileLabel" >Имя:</label>
+            <input type="text" class="profileInput" name="name" value="<%= name %>" readonly>
+            <label for="surname" class="profileLabel">Фамилия:</label>
+            <input type="text"  class="profileInput" name="surname" value="<%= surname %>" readonly>
+            </div>
+            <div class="profileField">
+            <label for="birthday" class="profileLabel" >Дата рождения:</label>
+            <input type="date" class="profileInput"  name="birthday" placeholder="dd-mm-yyyy"  value="<%= birthday %>" pattern="\d{4}-\d{2}-\d{2}" readonly>
+            </div>
+            <div class="profileField">
+            <label for="number_phone" class="profileLabel" >Номер телефона:</label>
+            <div class="phone-input" >
+                <input type="text" class="profileInput" name="number_phone" placeholder="8 ___ ___ __ __" value="<%= number_phone %>" readonly>
+            </div>
+            </div>
+            <h3 style="margin-bottom: 5px; text-align: center; ">Медицинские данные</h3>
+            <hr style="width: 100%;border-bottom: 2px solid #8bb9d5;margin-bottom: 20px;">
+                <div class="profileField">
+                    <label for="number_polis" class="profileLabel" >Номер полиса ОМС:</label>
+                    <input type="text" class="profileInput"  name="number_polis" value="<%= number_polis %>" readonly>
+                </div>
+                <div class="profileField">
+                    <label for="insurance_company" class="profileLabel" >Страховая компания:</label>
+                    <input type="text" class="profileInput"  name="insurance_company" value="<%= insurance_company %>" readonly>
+                </div>
+                <div class="profileField">
+                    <label for="type_blood" class="profileLabel" >Группа крови:</label>
+                    <select  class="profileInput"  name="type_blood" value="<%= type_blood %>" readonly>
+                        <option><%= type_blood %></option>
+                        <option value="I (0) Rh-">I (0) Rh-</option>
+                        <option value="I (0) Rh+">I (0) Rh+</option>
+                        <option value="II (A) Rh-">II (A) Rh-</option>
+                        <option value="II (A) Rh+">II (A) Rh+</option>
+                        <option value="III (B) Rh-">III (B) Rh-</option>
+                        <option value="III (B) Rh+">III (B) Rh+</option>
+                        <option value="IV (AB) Rh-">IV (AB) Rh-</option>
+                        <option value="IV (AB) Rh+">IV (AB) Rh+</option>
+                    </select>
+                </div>
+                    <div class="profileField">
+                    <label for="allergy" class="profileLabel" >Аллергии:</label>
+                    <input type="text" class="profileInput"  name="allergy" value="<%= allergy %>" readonly>
+                </div>
+                <div class="profileField">
+                    <label for="chronic_diseases" class="profileLabel">Хронические заболевания:</label>
+                    <textarea class="profileTextarea" rows="2" cols="2" name="chronic_diseases" readonly><%= chronic_diseases %></textarea>
+                </div>
+            <div class="button-container">
+            <button id="edit-button" type="button">Редактировать</button>
+            </div>
+            <div class="button-container">
+            <button id="save-button" type="submit" style="display: none;">Сохранить изменения</button>
+            </div>
+            <div class="button-container">
+            <button id="delete-button" type="button" style="display: none;">Удалить аккаунт</button>
+            </div>
+            </form>
     </div>
         <div class="profile-image">
-            <img src="path/to/profile-photo" alt="Profile photo">
-        </div>
-    <div class="info-user">
-        <form method="post" id="profile-form" action="/profile">
-            <label for="name">Имя:</label>
-            <input type="text" name="name" value="<%= name %> " readonly>
-            <label for="surname">Фамилия:</label>
-            <input type="text" name="surname" value="<%= surname %>" readonly>
-            <label for="gender">Пол:</label>
-            <select name="gender" readonly>
-                <option value="male" <%= gender === 'male' ? 'selected' : '' %>>Male</option>
-                <option value="female" <%= gender === 'female' ? 'selected' : '' %>>Female</option>
-            </select>
-            <label for="birthday">День рождения:</label>
-            <input type="date" name="birthday" placeholder="dd-mm-yyyy"  value="<%= birthday %>" pattern="\d{4}-\d{2}-\d{2}" readonly>
-
-            <label for="phone">Номер телефона:</label>
-            <div class="phone-input" >
-                <input type="tel" name="phone" placeholder="8 ___ ___ __ __" value="<%= number_phone %>" readonly>
+            <p style="margin-bottom: 5px; text-align: center; ">Фотография</p>
+            <hr style="width: 100%;border-bottom: 1px solid #8bb9d5;">
+            <div class="profile-photo">
+                <img src="images/iconuser.png" alt="Profile photo">
             </div>
-            <button id="edit-button" type="button">Редактировать</button>
-            <button id="save-button" type="submit" style="display: none;">Сохранить изменения</button>
-            <button id="delete-button" type="button">Удалить аккаунт</button>
-        </form>
+            <button class="select-photo">Выбрать фото</button>
+        </div>
     </div>
-
     <script>
         const editButton = document.getElementById('edit-button');
         const saveButton = document.getElementById('save-button');
-        const conclusionInputs = document.querySelectorAll('input[name="name"],input[name="surname"],input[name="birthday"],input[name="phone"],select[name="gender"]');
+        const delButton = document.getElementById('delete-button');
+        const conclusionInputs = document.querySelectorAll('select[name="type_blood"],input[name="number_polis"],input[name="insurance_company"],input[name="allergy"],textarea[name="chronic_diseases"],input[name="name"],input[name="surname"],input[name="birthday"],input[name="number_phone"],select[name="gender"]');
 
         // Обработчик нажатия кнопки "Редактировать"
         editButton.addEventListener('click', () => {
             editButton.style.display = 'none';
             saveButton.style.display = 'block';
+            delButton.style.display = 'block';
             conclusionInputs.forEach(input => input.removeAttribute('readonly'));
         });
 
@@ -62,6 +128,7 @@
         document.getElementById('profile-form').addEventListener('save-button', () => {
             editButton.style.display = 'block';
             saveButton.style.display = 'none';
+            delButton.style.display = 'none';
             conclusionInputs.forEach(input => input.setAttribute('readonly', ''));
         });
     </script>
@@ -73,9 +140,14 @@
                 e.preventDefault();
                 const name = document.querySelector('input[name="name"]').value;
                 const surname = document.querySelector('input[name="surname"]').value;
-                const gender = document.querySelector('select[name="gender"]').value;
+                const gender = document.querySelector('input[name="gender"]').value;
                 const birthday = document.querySelector('input[name="birthday"]').value;
-                const number_phone = document.querySelector('input[name="phone"]').value;
+                const number_phone = document.querySelector('input[name="number_phone"]').value;
+                const type_blood = document.querySelector('select[name="type_blood"]').value;
+                const number_polis = document.querySelector('input[name="number_polis"]').value;
+                const insurance_company = document.querySelector('input[name="insurance_company"]').value;
+                const allergy = document.querySelector('input[name="allergy"]').value;
+                const chronic_diseases = document.querySelector('textarea[name="chronic_diseases"]').value;
                 const today = new Date();
                 const selectedDate = new Date(birthday);
                 if (selectedDate > today) {
@@ -92,7 +164,12 @@
                         surname: surname,
                         gender: gender,
                         birthday: birthday,
-                        number_phone: number_phone
+                        number_phone: number_phone,
+                        type_blood: type_blood,
+                        number_polis: number_polis,
+                        insurance_company: insurance_company,
+                        allergy: allergy,
+                        chronic_diseases: chronic_diseases
                     })
                 })
                     .then(response => response.json())
