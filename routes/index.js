@@ -479,7 +479,7 @@ router.get('/carta', function(req, res, next) {
   if (req.session.loggedin) {
           // Query the database for all files uploaded by the user
           connection.query(
-              'SELECT files.file_path as file_path,conclusion.type_doctor as type_doctor, files.file_id as file_id, files.file_type as file_type, conclusion.name_conclusion as name_conclusion, conclusion.type_conclusion as type_conclusion, conclusion.data_conclusion as data_conclusion, conclusion.id_conclusion as id_conclusion FROM files left join conclusion on files.id_conclusion = conclusion.id_conclusion where files.user_id =?',
+              'SELECT files.file_path as file_path,conclusion.comment as comment, conclusion.type_doctor as type_doctor,conclusion.type_info as type_info, files.file_id as file_id, files.file_type as file_type, conclusion.name_conclusion as name_conclusion, conclusion.type_conclusion as type_conclusion, conclusion.data_conclusion as data_conclusion, conclusion.id_conclusion as id_conclusion FROM files left join conclusion on files.id_conclusion = conclusion.id_conclusion where files.user_id =?',
               [req.session.user_id],
                function (error, results, fields) {
                  results.forEach(element => {
@@ -497,7 +497,9 @@ router.get('/carta', function(req, res, next) {
                  results = filter(req.query.filter_by, req.query.filter_value,req.query.filter_end, results)
                  results = sort(req.query.sorted_by,req.query.revers, results)
                  results = search(req.query.search_by, results)
-
+                 results.forEach(result=>{
+                   result.type_info=JSON.parse(result.type_info)
+                 })
                  // Pass the files array to the template
                 res.render('carta', {
                   files: results

@@ -5,6 +5,7 @@
     <meta charset="utf-8">
     <link type="text/css" rel="stylesheet" href="/stylesheets/style.css" />
     <link type="text/css" rel="stylesheet" href="/stylesheets/skin.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
 </head>
 <body class="home">
 <div id="wrap">
@@ -19,10 +20,11 @@
             </ul>
         </div>
     </div>
-    <div class="info-user">
-        <form id="conclusion-form" method="post" action="/carta/carta_file/<%= file_id %>">
-            <label for="name"> <%=type_conclusion%></label>
-            <div class="file">
+    <div id="main" >
+        <form id="conclusion-form" method="post" style="display: flex;
+    flex-direction: row-reverse;" action="/carta/carta_file/<%= file_id %>">
+            <div class="hrop" style="margin-left: 50px;margin-top:30px;width: 400px;">
+            <div class="fileimg">
                 <% if(file.file_type==='png'||file.file_type==='jpeg'||file.file_type==='jpg') { %>
                     <img src="/<%= file.file_path %>" />
                 <% } else if (file.file_type==='pdf') { %>
@@ -35,17 +37,25 @@
                     </div>
                 <% } %>
             </div>
-
-            <div class="overlay"></div>
-
-            <div class="modal">
-                <img src="">
-                <div class="close-btn">Закрыть</div>
             </div>
-            <label for="name_conclusion">Название</label>
-            <input type="text" name="name_conclusion" value="<%=name_conclusion%>" readonly>
-            <label for="type_doctor">Доктор:</label>
-            <select name="type_doctor" readonly>
+            <div class="info-user" style="width: 650px;">
+            <h2 style="text-align: center; margin: 1px;"><%=type_conclusion%></h2>
+            <hr style="width: 100%;border-bottom: 2px solid #8bb9d5;">
+                <div class="overlay">
+            <div class="modal">
+                <div class="close-btn"><i class="fas fa-times"></i></div>
+                <img src="">
+            </div>
+                </div>
+            <div class="other">
+            <div class="profileField">
+            <label for="name_conclusion" class="profileLabel">Название</label>
+            <input type="text" name="name_conclusion" class="profileInput" value="<%=name_conclusion%>" readonly>
+            </div>
+            <div class="profileField">
+
+            <label for="type_doctor" class="profileLabel">Доктор:</label>
+            <select name="type_doctor"  class="profileInput" readonly>
                 <option > <%=type_doctor%> </option>
                 <option>Аллерголог</option>
                 <option>Дерматовенеролог</option>
@@ -71,85 +81,144 @@
                 <option>Эпидемиолог</option>
                 <option>Другое</option>
             </select>
-            <label for="place_conclusion">Место</label>
-            <input type="text" name="place_conclusion" value="<%=place_conclusion%>" readonly>
-            <label for="doctor">Врач</label>
-            <input type="text" name="doctor" value="<%=place_conclusion%>" readonly>
-            <label for="data_conclusion">Дата заключения:</label>
-            <input type="date" name="data_conclusion" placeholder="dd-mm-yyyy" value="<%=data_conclusion%>" pattern="\d{4}-\d{2}-\d{2}" readonly>
-            <label for="comment">Комментарии</label>
-            <input type="text" name="comment" value="<%=comment%>" readonly>
-            <% if ( "conclusion" in type_info) {%>
-                <label for="conclusion">Заключение</label>
-                <input type="text" name="conclusion" value="<%=type_info['conclusion']%>" readonly>
-            <%}%>
-            <% if ( "code" in type_info) {%>
-            <label for="code">Название/Код</label>
-            <input type="text" name="code" value="<%=type_info['code']%>" readonly>
-            <%}%>
-            <% if ( "diagnosis" in type_info) {%>
-            <label for="diagnosis">Диагноз</label>
-            <input type="text" name="diagnosis" value="<%=type_info['diagnosis']%>" readonly>
-            <%}%>
-            <% if ( "complaints" in type_info) {%>
-            <label for="complaints">Жалобы</label>
-            <input type="text" name="complaints" value="<%=type_info['complaints']%>" readonly>
-            <%}%>
-            <% if ( "anamnez" in type_info) {%>
-            <label for="anamnez">Анамнез</label>
-            <input type="text" name="anamnez" value="<%=type_info['anamnez']%>" readonly>
-            <%}%><% if ( "prescription" in type_info) {%>
-            <label for="prescription">Назначение рецепта</label>
-            <input type="text" name="prescription" value="<%=type_info['prescription']%>" readonly>
-            <%}%>
-            <% if ( "area" in type_info) {%>
-            <label for="area">Область</label>
-            <input type="text" name="area" value="<%=type_info['area']%>" readonly>
-            <%}%>
-            <% if ( "purpose" in type_info) {%>
-            <label for="purpose">Цель</label>
-            <input type="text" name="purpose" value="<%=type_info['purpose']%>" readonly>
-            <%}%>
-            <% if ( "todoctor" in type_info) {%>
-            <label for="todoctor">к какому врачу</label>
-            <input type="text" name="todoctor" value="<%=type_info['todoctor']%>" readonly>
-            <%}%>
-            <% if ( "justification" in type_info) {%>
-            <label for="justification">Обоснование направления</label>
-            <input type="text" name="justification" value="<%=type_info['justification']%>" readonly>
-            <%}%>
+            </div>
+            <div class="profileField">
+            <label for="place_conclusion" class="profileLabel">Место</label>
+            <input type="text" style="width: 100%" class="profileInput"  name="place_conclusion" value="<%=place_conclusion%>" readonly>
+            <label for="doctor" class="profileLabel">ФИО врача</label>
+            <input type="text" style="width: 100%" class="profileInput"  name="doctor" value="<%=doctor%>" readonly>
+            </div>
+            <div class="profileField">
+            <label for="data_conclusion" class="profileLabel">Дата заключения:</label>
+            <input type="date" class="profileInput"  name="data_conclusion" placeholder="dd-mm-yyyy" value="<%=data_conclusion%>" pattern="\d{4}-\d{2}-\d{2}" readonly>
+            </div>
+            <% if ( "conclusion" in type_info) {%>             <div class="profileField">
+                <label for="conclusion" class="profileLabel">Заключение</label>
+                <input type="text" class="profileInput"  name="conclusion" value="<%=type_info['conclusion']%>" readonly>
+                </div>
+                <%}%>
+            <% if ( "code" in type_info) {%>            <div class="profileField">
+
+                <label for="code" class="profileLabel">Название/Код</label>
+            <input type="text" class="profileInput"  name="code" value="<%=type_info['code']%>" readonly>
+                </div>
+                <%}%>
+            <% if ( "diagnosis" in type_info) {%>            <div class="profileField">
+
+                <label for="diagnosis" class="profileLabel">Диагноз</label>
+            <input type="text" class="profileInput"  name="diagnosis" value="<%=type_info['diagnosis']%>" readonly>
+                </div>
+                <%}%>
+
+            <% if ( "complaints" in type_info) {%>             <div class="profileField">
+
+                <label for="complaints" class="profileLabel">Жалобы</label>
+            <input type="text" class="profileInput"  name="complaints" value="<%=type_info['complaints']%>" readonly>
+                </div>
+                <%}%>
+            <% if ( "anamnez" in type_info) {%>            <div class="profileField">
+
+                <label for="anamnez" class="profileLabel">Анамнез</label>
+            <input type="text" class="profileInput"  name="anamnez" value="<%=type_info['anamnez']%>" readonly>
+                </div>
+                <%}%>
+                <% if ( "prescription" in type_info) {%>            <div class="profileField">
+
+                <label for="prescription" class="profileLabel">Назначение рецепта</label>
+            <input type="text" class="profileInput"  name="prescription" value="<%=type_info['prescription']%>" readonly>
+                </div>
+                <%}%>
+            <% if ( "area" in type_info) {%>            <div class="profileField">
+
+                <label for="area" class="profileLabel">Область</label>
+            <input type="text" class="profileInput"  name="area" value="<%=type_info['area']%>" readonly>
+                </div>
+                <%}%>
+            <% if ( "purpose" in type_info) {%>            <div class="profileField">
+
+                <label for="purpose" class="profileLabel">Цель</label>
+            <input type="text" class="profileInput"  name="purpose" value="<%=type_info['purpose']%>" readonly>
+                </div>
+                <%}%>
+            <% if ( "todoctor" in type_info) {%>            <div class="profileField">
+
+                <label for="todoctor" class="profileLabel">к какому врачу</label>
+            <input type="text" class="profileInput"  name="todoctor" value="<%=type_info['todoctor']%>" readonly>
+                </div>
+                <%}%>
+            <% if ( "justification" in type_info) {%>            <div class="profileField">
+
+                <label for="justification" class="profileLabel">Обоснование направления</label>
+            <input type="text" class="profileInput"  name="justification" value="<%=type_info['justification']%>" readonly>
+                </div>
+                <%}%>
             <% if ( "cameto" in type_info) {%>
-            <label for="cameto">Явиться к</label>
-            <input type="text" name="cameto" value="<%=type_info['cameto']%>" readonly>
-            <%}%>
+                <div class="profileField">
+
+                <label for="cameto" class="profileLabel">Явиться к</label>
+            <input type="text" class="profileInput"  name="cameto" value="<%=type_info['cameto']%>" readonly>
+                </div>
+                <%}%>
             <% if ( "date_starting" in type_info) {%>
-            <label for="date_starting">Дата с</label>
-            <input type="text" name="date_starting" value="<%=type_info['date_starting']%>" readonly>
-            <%}%>
+                <div class="profileField">
+
+                <label for="date_starting" class="profileLabel">Дата с</label>
+            <input type="text" class="profileInput"  name="date_starting" value="<%=type_info['date_starting']%>" readonly>
+                </div>
+                <%}%>
             <% if ( "date_finish" in type_info) {%>
-            <label for="date_finish">Дата по</label>
-            <input type="text" name="date_finish" value="<%=type_info['date_finish']%>" readonly>
-            <%}%>
+                <div class="profileField">
+
+                <label for="date_finish" class="profileLabel">Дата по</label>
+            <input type="text" class="profileInput"  name="date_finish" value="<%=type_info['date_finish']%>" readonly>
+                </div>
+                <%}%>
             <% if ( "allergen" in type_info) {%>
-            <label for="allergen">Аллерген</label>
-            <input type="text" name="allergen" value="<%=type_info['allergen']%>" readonly>
-            <%}%>
+                <div class="profileField">
+
+                <label for="allergen" class="profileLabel">Аллерген</label>
+            <input type="text" class="profileInput"  name="allergen" value="<%=type_info['allergen']%>" readonly>
+                </div>
+                <%}%>
             <% if ( "reaction" in type_info) {%>
-            <label for="reaction">Реакция</label>
-            <input type="text" name="reaction" value="<%=type_info['reaction']%>" readonly>
-            <%}%>
+                <div class="profileField">
+
+                <label for="reaction" class="profileLabel">Реакция</label>
+            <input type="text" class="profileInput"  name="reaction" value="<%=type_info['reaction']%>" readonly>
+                </div>
+                <%}%>
             <% if ( "medication" in type_info) {%>
-            <label for="medication">Препарат</label>
-            <input type="text" name="medication" value="<%=type_info['medication']%>" readonly>
-            <%}%>
+                <div class="profileField">
+                <label for="medication" class="profileLabel">Препарат</label>
+            <input type="text" class="profileInput"  name="medication" value="<%=type_info['medication']%>" readonly>
+                </div>
+                <%}%>
             <% if ( "dose" in type_info) {%>
-            <label for="dose">Доза препарата</label>
-            <input type="text" name="dose" value="<%=type_info['dose']%>" readonly>
-            <%}%>
-            <button id="edit-button" type="button">Редактировать</button>
-            <button id="delete-button" type="button">Удалить запись</button>
-            <button id="save-button" type="submit" style="display: none;">Сохранить изменения</button>
+                <div class="profileField" >
+                <label for="dose" class="profileLabel">Доза препарата</label>
+            <input type="text" class="profileInput"  name="dose" value="<%=type_info['dose']%>" readonly>
+                </div>
+                <%}%>
+            <div class="profileField">
+                <label for="comment" class="profileLabel">Комментарии</label>
+                <input type="text" class="profileInput"  name="comment" value="<%=comment%>" readonly>
+            </div>
+            </div>
+            <div class="button-container" style="justify-content: space-around; margin-right: 20px">
+
+            <button id="delete-button" type="button">
+                <i class="fas fa-trash-alt"></i> Удалить запись
+            </button>
+                <button id="save-button" type="submit" style="display: none;">
+                    <i class="fas fa-save"></i> Сохранить изменения
+                </button>
+                <button id="edit-button" type="button">
+                    <i class="fas fa-edit"></i> Редактировать
+                </button>
+            </div>
+            </div>
         </form>
+        </div>
     </div>
 </div>
 <!--end wrap-->
@@ -175,7 +244,7 @@
 
 </script>
 <script>
-    const fileImages = document.querySelectorAll('.file img');
+    const fileImages = document.querySelectorAll('.fileimg img');
     const overlay = document.querySelector('.overlay');
     const modal = document.querySelector('.modal');
     const modalImage = document.querySelector('.modal img');
