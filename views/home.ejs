@@ -1,39 +1,156 @@
 ﻿<!DOCTYPE html>
 <html lang="en">
 <head>
-  <title>Медицинска карта пользователя</title>
-  <meta charset="utf-8">
-  <link type="text/css" rel="stylesheet" href="stylesheets/style.css" />
-  <link type="text/css" rel="stylesheet" href="stylesheets/skin.css" />
+    <title>Медицинска карта пользователя</title>
+    <meta charset="utf-8">
+    <link type="text/css" rel="stylesheet" href="stylesheets/style.css"/>
+    <link type="text/css" rel="stylesheet" href="stylesheets/skin.css"/>
 </head>
 <body class="home">
 <div id="wrap">
-  <div id="header"> <img src="images/logo.png" />
-    <div id="nav">
-      <ul class="menu">
-        <li  class="current_page_item"><a href="/home">
-            <img src="images/main.png" class="nav-item-image"/>
-            Главная</a></li>
-        <li><a href="/profile">
-            <img src="images/prof.png" class="nav-item-image"/>
-            Профиль</a></li>
-        <li><a href="/carta">
-            <img src="images/edcart.png" class="nav-item-image"/>
-            Мед.карточка</a></li>
-        <li>
-          <a href="/visit_doctor">
-            <img src="images/visitdoc.png" class="nav-item-image"/>
-            Визит к врачу</a></li>
-        <li>
-          <a href="/logout">
-            <img src="images/logout.png" class="nav-item-image"/>
-            Выйти
-          </a>
-        </li>
-      </ul>
+    <div id="header"><img src="images/logo.png"/>
+        <div id="nav">
+            <ul class="menu">
+                <li class="current_page_item"><a href="/home">
+                        <img src="images/main.png" class="nav-item-image"/>
+                        Главная</a></li>
+                <li><a href="/profile">
+                        <img src="images/prof.png" class="nav-item-image"/>
+                        Профиль</a></li>
+                <li><a href="/carta">
+                        <img src="images/edcart.png" class="nav-item-image"/>
+                        Мед.карточка</a></li>
+                <li>
+                    <a href="/visit_doctor">
+                        <img src="images/visitdoc.png" class="nav-item-image"/>
+                        Визит к врачу</a></li>
+                <li>
+                    <a href="/logout">
+                        <img src="images/logout.png" class="nav-item-image"/>
+                        Выйти
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div id="mainhome">
+        <div class="visits1" style="display: flex; justify-content: flex-end;">
+            <div class="visits" style="display:flex; flex-direction: row;justify-content:space-around ">
+                <div class="visitlast">
+                    <%
+                    var currentDate = new Date();
+                    var nearestVisit = null;
+                    var nearestDate = null;
+
+                    files.forEach(function (file) {
+                        if (file.data_visit) {
+                            var visitDate = new Date(file.data_visit);
+
+                            if (visitDate < currentDate && (!nearestVisit || visitDate > nearestDate)) {
+                                nearestVisit = file;
+                                nearestDate = visitDate;
+                            }
+                        }
+                    });
+
+                    if (nearestVisit) { %>
+                        <div class="visit-name-data">
+                            <div class="name-inp"
+                                 style="color: #b61427; font-weight: bold; text-align: center"><%= nearestDate.toLocaleString('ru-RU', {
+                                    day: 'numeric',
+                                    month: 'long',
+                                    year: 'numeric',
+                                    hour: '2-digit',
+                                    minute: '2-digit'
+                                }) %></div>
+                        </div>
+                        <% if (nearestVisit.name_visit) { %>
+                            <div class="visit-name-data">
+                                <div class="name-inp"
+                                     style="text-align: center;font-weight: bolder	;"><%= nearestVisit.name_visit %></div>
+                                <hr style="color:black;">
+
+                            </div>
+                        <% }
+                        if (nearestVisit.name_doctor) { %>
+                            <div class="visit-name-list">
+                                <div class="visit-name">Врач:</div>
+                                <div class="name-inp"><%= nearestVisit.name_doctor %></div>
+                            </div>
+                        <% } %>
+                        <% if (nearestVisit.place) { %>
+                            <div class="visit-name-list">
+                                <div class="visit-name">Клиника:</div>
+                                <div class="name-inp"><%= nearestVisit.place %></div>
+                            </div>
+                        <% } %>
+                        <% if (nearestVisit.id_conclusion) { %>
+                            <a href="/carta/carta_file/<%= nearestVisit.id_conclusion %>" class="butonok">Посмотреть</a>
+                        <% }else { %>
+                            <a href="/carta?needaddform=true" class="butonok">Добавить</a>
+                        <% } %>
+                    <% } %>
+
+                </div>
+                <div class="visitFeature">
+                    <%
+                    var currentDate = new Date();
+                    var nearestVisit = null;
+                    var nearestDate = null;
+
+                    files.forEach(function (file) {
+                        if (file.data_visit) {
+                            var visitDate = new Date(file.data_visit);
+
+                            if (visitDate >= currentDate && (!nearestVisit || visitDate < nearestDate)) {
+                                nearestVisit = file;
+                                nearestDate = visitDate;
+                            }
+                        }
+                    });
+
+                    if (nearestVisit) { %>
+                        <div class="visit-name-data">
+                            <div class="name-inp"
+                                 style="color: #0f7940; font-weight: bold; text-align: center"><%= nearestDate.toLocaleString('ru-RU', {
+                                    day: 'numeric',
+                                    month: 'long',
+                                    year: 'numeric',
+                                    hour: '2-digit',
+                                    minute: '2-digit'
+                                }) %></div>
+                        </div>
+                        <% if (nearestVisit.name_visit) { %>
+                            <div class="visit-name-data">
+                                <div class="name-inp"
+                                     style="text-align: center;font-weight: bolder	;"><%= nearestVisit.name_visit %></div>
+                                <hr style="color:black;">
+
+                            </div>
+                        <% }
+                        if (nearestVisit.place) { %>
+                            <div class="visit-name-list">
+                                <div class="visit-name">Клиника:</div>
+                                <div class="name-inp"><%= nearestVisit.place %></div>
+                            </div>
+                        <% }
+
+                        if (nearestVisit.name_doctor) { %>
+                            <div class="visit-name-list">
+                                <div class="visit-name">Врач:</div>
+                                <div class="name-inp"><%= nearestVisit.name_doctor %></div>
+                            </div>
+                        <% } %>
+                    <% } %>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 </div>
 <!--end wrap-->
 </body>
 </html>
+
+
+

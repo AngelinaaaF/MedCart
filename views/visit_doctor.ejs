@@ -3,66 +3,140 @@
 <head>
     <title>Медицинска карта пользователя</title>
     <meta charset="utf-8">
-    <link type="text/css" rel="stylesheet" href="stylesheets/style.css" />
-    <link type="text/css" rel="stylesheet" href="stylesheets/skin.css" />
-    <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/fullcalendar.min.css' />
+    <link type="text/css" rel="stylesheet" href="stylesheets/style.css"/>
+    <link type="text/css" rel="stylesheet" href="stylesheets/skin.css"/>
     <script src='https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js'></script>
-    <script src='https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/fullcalendar.min.js'></script>
 </head>
 <body class="home">
 <div id="wrap">
-    <div id="header"> <img src="/images/logo.png" />
+    <div id="header"><img src="/images/logo.png"/>
         <div id="nav">
             <ul class="menu">
-                <li><a href="/home">Главная</a></li>
-                <li class="current_page_item"><a href="/profile">Профиль</a></li>
-                <li><a href="/carta">Мед.карточка</a></li>
-                <li><a href="/visit_doctor">Визит к врачу</a></li>
-                <li><a href="/logout">Выйти</a></li>
+                <li><a href="/home">
+                        <img src="images/main.png" class="nav-item-image"/>
+                        Главная</a></li>
+                <li><a href="/profile">
+                        <img src="images/prof.png" class="nav-item-image"/>
+                        Профиль</a></li>
+                <li><a href="/carta">
+                        <img src="images/edcart.png" class="nav-item-image"/>
+                        Мед.карточка</a></li>
+                <li>
+                    <a href="/visit_doctor" class="current_page_item">
+                        <img src="images/visitdoc.png" class="nav-item-image"/>
+                        Визит к врачу</a></li>
+                <li>
+                    <a href="/logout">
+                        <img src="images/logout.png" class="nav-item-image"/>
+                        Выйти
+                    </a>
+                </li>
             </ul>
         </div>
     </div>
-    <button id="add-visit-btn">Добавить запись</button>
-    <div id='calendar'></div>
-    <div id="modal" class="modal">
-        <div class="modal-content">
-            <span id="close-modal-btn" class="close">&times;</span>
-            <form id="visit_form" method="post" action="/visit_doctor">                <label for="data_visit">Дата и время приема:</label>
-                <input id="data_visit" name="data_visit" type="datetime-local" required>
-                <label for="name_doctor">Врач:</label>
-                <input id="name_doctor" name="name_doctor" type="text" >
-                <label for="place">Место:</label>
-                <input id="place" name="place" type="text" >
-                <button type="submit">Добавить</button>
-            </form>
+    <div id="mainVisit">
+        <div class="button-add-note" style="display:flex;flex-direction: row-reverse;">
+            <button id="add-visit-btn" class="btn">Добавить запись</button>
+            <div id="modal-visit">
+                <div class="modal-content">
+                    <span id="close-modal-btn" class="close" style="text-align: left">&times;</span>
+                    <form id="visit_form" method="post" action="/visit_doctor" style="margin-top: 0px">
+                        <label for="name_visit">Название:</label>
+                        <input id="name_visit" class="visitInput" name="name_visit" type="text" required>
+                        <label for="data_visit">Дата и время приема:</label>
+                        <input id="data_visit" class="visitInput" name="data_visit" type="datetime-local" required>
+                        <label for="name_doctor">Врач:</label>
+                        <input id="name_doctor" class="visitInput" name="name_doctor" type="text">
+                        <label for="place">Место:</label>
+                        <input id="place" class="visitInput" name="place" type="text">
+                        <button type="submit" class="butonok" style="margin-top: 10px; width: 75%; margin-left: 35px">
+                            Добавить
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="visits1" style="display: flex; justify-content: flex-end;">
+            <div class="visits" style="display:flex; flex-direction: row;justify-content:space-around ">
+                <div class="visitlast" style="width: 500px; height: 500px;">
+                    <% visiters.forEach(function(visiters) {
+                    if (visiters.data_visit) {
+                        var currentDate = new Date();
+                        var visitDate = new Date(visiters.data_visit);
+                    %>
+                    <% if (visitDate < currentDate) { %>
+                        <li class="listvisit">
+                            <div class="visit-name-data">
+                                <div class="name-inp"
+                                     style="color: #b61427; font-weight: bold; text-align: center"><%= visitDate.toLocaleString('ru-RU', {
+                                        day: 'numeric',
+                                        month: 'long',
+                                        year: 'numeric',
+                                        hour: '2-digit',
+                                        minute: '2-digit'
+                                    }) %></div>
+                            </div>
+                            <% if (visiters.name_visit) { %>
+                                <div class="visit-name-data">
+                                    <div class="name-inp"
+                                         style="text-align: center;font-weight: bolder	;"><%= visiters.name_visit %></div>
+                                    <hr style="color:black;">
+                                </div>
+                            <% }
+                            if (visiters.name_doctor) { %>
+                                <div class="visit-name-list">
+                                    <div class="visit-name">Врач:</div>
+                                    <div class="name-inp"><%= visiters.name_doctor %></div>
+                                </div>
+                            <% } %>
+                            <% if (visiters.place) { %>
+                                <div class="visit-name-list">
+                                    <div class="visit-name">Клиника:</div>
+                                    <div class="name-inp"><%= visiters.place %></div>
+                                </div>
+                            <% } %>
+                        </li>
+                        <% if (visiters.id_conclusion) { %>
+                            <a href="/carta/carta_file/<%= visiters.id_conclusion %>" class="butonok">Посмотреть</a>
+                        <% }else { %>
+                            <a href="/carta?needaddform=true" class="butonok">Добавить</a>
+                        <% } %>
+                    <% }
+                    }
+                    }); %>
+                </div>
+            </div>
         </div>
     </div>
+    <div class="calendar-wrapper">
+        <button id="btnPrev" type="button">Предыдущий</button>
+        <button id="btnNext" type="button">Следующий</button>
+        <div id="divCal"></div>
+    </div>
+    <div id="modal_calendar" class="modal">
+        <div class="modal-content">
+            <label for="name_visit">Название:</label>
+            <label for="data_visit">Дата и время приема:</label>
+       <label for="name_doctor">Врач:</label>
+        </div>
+    </div>
+
 </div>
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        var calendarEl = document.getElementById('calendar');
-        var calendar = new FullCalendar.Calendar(calendarEl, {
-            plugins: [ 'dayGrid' ],
-            events: [
-                { title: 'Визит к врачу', start: '<%=data_visit%>'}
-            ]
-        });
-        calendar.render();
-    });
-</script>
+</div>
+
 <script>
     // получаем кнопку добавления записи
     const addVisitBtn = document.getElementById('add-visit-btn');
 
     // получаем модальное окно
-    const modal = document.getElementById('modal');
+    const modal = document.getElementById('modal-visit');
 
     // получаем кнопку закрытия модального окна
     const closeBtn = document.getElementById('close-modal-btn');
     // добавляем обработчик события клика на кнопку добавления записи
     addVisitBtn.addEventListener('click', () => {
         // отображаем модальное окно
-        modal.style.display = 'block';
+        modal.style.display = 'flex';
     });
     // добавляем обработчик события клика на кнопку закрытия модального окна
     closeBtn.addEventListener('click', () => {
@@ -83,6 +157,195 @@
         modal.style.display = 'none';
     });
 
+</script>
+
+<script>
+    var Cal = function (divId) {
+        //Сохраняем идентификатор div
+        this.divId = divId;
+        // Дни недели с понедельника
+        this.DaysOfWeek = [
+            'Пн',
+            'Вт',
+            'Ср',
+            'Чтв',
+            'Птн',
+            'Суб',
+            'Вск'
+        ];
+        // Месяцы начиная с января
+        this.Months = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'];
+        //Устанавливаем текущий месяц, год
+        var d = new Date();
+        this.currMonth = d.getMonth();
+        this.currYear = d.getFullYear();
+        this.currDay = d.getDate();
+        this.visiters = <%- JSON.stringify(visiters) %>;
+        console.log(this.visiters)
+    };
+    // Переход к следующему месяцу
+    Cal.prototype.nextMonth = function () {
+        if (this.currMonth == 11) {
+            this.currMonth = 0;
+            this.currYear = this.currYear + 1;
+        } else {
+            this.currMonth = this.currMonth + 1;
+        }
+        this.showcurr();
+    };
+
+    // Переход к предыдущему месяцу
+    Cal.prototype.previousMonth = function () {
+        if (this.currMonth == 0) {
+            this.currMonth = 11;
+            this.currYear = this.currYear - 1;
+        } else {
+            this.currMonth = this.currMonth - 1;
+        }
+        this.showcurr();
+    };
+    // Показать текущий месяц
+    Cal.prototype.showcurr = function () {
+        this.showMonth(this.currYear, this.currMonth);
+    };
+    // Показать месяц (год, месяц)
+    Cal.prototype.showMonth = function (y, m) {
+        var d = new Date()
+            // Первый день недели в выбранном месяце
+            , firstDayOfMonth = new Date(y, m, 7).getDay()
+            // Последний день выбранного месяца
+            , lastDateOfMonth = new Date(y, m + 1, 0).getDate()
+            // Последний день предыдущего месяца
+            , lastDayOfLastMonth = m == 0 ? new Date(y - 1, 11, 0).getDate() : new Date(y, m, 0).getDate();
+        var html = '<table>';
+
+        // Запись выбранного месяца и года
+        html += '<thead><tr>';
+        html += '<td colspan="7">' + this.Months[m] + ' ' + y + '</td>';
+        html += '</tr></thead>';
+        // заголовок дней недели
+        html += '<tr class="days">';
+        for (var i = 0; i < this.DaysOfWeek.length; i++) {
+            html += '<td>' + this.DaysOfWeek[i] + '</td>';
+        }
+        html += '</tr>';
+        // Записываем дни
+        var i = 1;
+        do {
+            var dow = new Date(y, m, i).getDay();
+            // Начать новую строку в понедельник
+            if (dow == 1) {
+                html += '<tr>';
+            }
+            // Если первый день недели не понедельник показать последние дни предыдущего месяца
+            else if (i == 1) {
+                html += '<tr>';
+                var k = lastDayOfLastMonth - firstDayOfMonth + 1;
+                for (var j = 0; j < firstDayOfMonth; j++) {
+                    html += '<td class="not-current">' + k + '</td>';
+                    k++;
+                }
+            }
+            // Записываем текущий день в цикл
+            var chk = new Date();
+            var chkY = chk.getFullYear();
+            var chkM = chk.getMonth();
+            function GetVisit(visiters, chkY, chkM, i) {
+                for (let a = 0; a < visiters.length; a++) {
+                    const dateString = visiters[a].data_visit;
+                    const visitDate = new Date(dateString);
+                    console.log(visitDate);
+                    const day = visitDate.getDate(); // Извлечение дня (например, 16)
+                    const month = visitDate.getMonth(); // Получение месяца (число без нуля), прибавляем 1, так как месяцы в JavaScript начинаются с 0
+                    const year = visitDate.getFullYear(); // Получение года
+
+                    console.log("День:", day);
+                    console.log("Месяц:", month);
+                    console.log("Год:", year);
+
+                    if (day === i && month === chkM && year === chkY) {
+                        return true;
+                    }
+                }
+
+                return false;
+            }
+
+            let visit = GetVisit(this.visiters, this.currYear, this.currMonth, i);
+            if (chkY == this.currYear && chkM == this.currMonth && i == this.currDay) {
+                if (visit) {
+                    html += '<td class="normal" style="background: #b61427" onmouseover="openModal(visiters, event)" onmouseout="closeModal()">' + i + '</td>';
+                } else {
+                    html += '<td class="today">' + i + '</td>';
+                }
+            } else {
+                if (visit) {
+                    html += '<td class="normal" style="background: #b61427" onmouseover="openModal(this.visiters, event)" onmouseout="closeModal()">' + i + '</td>';
+                } else {
+                    html += '<td class="normal">' + i + '</td>';
+                }
+            }
+
+
+            // закрыть строку в воскресенье
+            if (dow == 0) {
+                html += '</tr>';
+            }
+            // Если последний день месяца не воскресенье, показать первые дни следующего месяца
+            else if (i == lastDateOfMonth) {
+                var k = 1;
+                for (dow; dow < 7; dow++) {
+                    html += '<td class="not-current">' + k + '</td>';
+                    k++;
+                }
+            }
+            i++;
+        } while (i <= lastDateOfMonth);
+        // Конец таблицы
+        html += '</table>';
+        // Записываем HTML в div
+        document.getElementById(this.divId).innerHTML = html;
+    };
+
+    // При загрузке окна
+    window.onload = function () {
+        // Начать календарь
+        var c = new Cal("divCal");
+        c.showcurr();
+        // Привязываем кнопки «Следующий» и «Предыдущий»
+        getId('btnNext').onclick = function () {
+            c.nextMonth();
+        };
+        getId('btnPrev').onclick = function () {
+            c.previousMonth();
+        };
+    }
+
+    // Получить элемент по id
+    function getId(id) {
+        return document.getElementById(id);
+    }
+</script>
+<script>
+    function openModal(visiters,eventer) {
+        console.log(visiters)
+        const modal_calendar = document.getElementById('modal_calendar');
+
+
+        // Открытие модального окна
+        modal_calendar.style.display = 'block';
+        const x = window.event.clientX;
+        const y = window.event.clientY;
+        modal_calendar.style.left = x + 'px';
+        modal_calendar.style.top = y + 'px';
+    }
+
+    function closeModal() {
+        const modal_calendar = document.getElementById('modal_calendar');
+
+        // Закрытие модального окна
+        modal_calendar.style.display = 'none';
+    }
 </script>
 </body>
 </html>

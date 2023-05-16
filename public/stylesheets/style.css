@@ -14,6 +14,21 @@
 	justify-content: center;
 	margin-left: 170px; /* ширина #nav + отступ между #nav и #main */
 }
+#mainhome{
+	margin-top: 25px;
+	padding: 15px;
+	display: flex;
+	flex-direction: column;
+	margin-left: 170px; /* ширина #nav + отступ между #nav и #main */
+}
+#mainVisit{
+	margin-top: 25px;
+	padding: 15px;
+	display: flex;
+	margin-left: 170px;
+	flex-direction: column;
+	margin-right: 50px;/* ширина #nav + отступ между #nav и #main */
+}
 #mainCarta{
 	margin-top: 5px;
 	padding: 15px;
@@ -821,7 +836,7 @@ width: 100%;
 .filecart {
 	position: relative;
 	width: 220px;
-	height: 220px;
+	height: auto;
 	display: flex;
 	margin: 5px 10px 0px 10px;
 	object-position: center;
@@ -842,7 +857,7 @@ width: 100%;
 .infifile{
 	margin: 10px 0px 0px 10px;
 	object-position: left;
-height: 200px;
+height: auto;
 	display: flex;
 	flex-direction: column;
 	width: 100%;
@@ -860,10 +875,12 @@ height: 200px;
 	box-sizing: border-box;
 	font-size: 16px;
 }
-.file-name-list {
+.visit-name-list {
 	display: flex;
 	flex-direction: row;
 	margin-bottom: 5px;
+	border: 1px solid #f3f3f5;
+
 }
 .image-upload {
 	max-width: 500px;
@@ -901,8 +918,8 @@ height: 200px;
 .modal img {
 	width: auto;
 	height: auto;
-	max-height: 920px;
-	max-width: 920px;
+	max-height: 650px;
+	max-width: 650px;
 	margin: auto;
 	box-shadow: 0px 0px 3px rgb(214, 229, 238);
 
@@ -914,7 +931,7 @@ height: 200px;
 	right: 0;
 	padding: 10px;
 	cursor: pointer;
-	color: #fff;
+	color: #00ff77;
 	z-index: 1;
 
 }
@@ -1139,6 +1156,141 @@ flex-direction: column;
 .listwiew i:hover, .gallerywiew i:hover {
 	color: #000000;
 }
+.visit-name{
+	width: 150px;
+}
+#modal-visit {
+	display: none;
+	position: fixed;
+	flex-direction: column;
+	top: 47%;
+	left: 86%;
+	transform: translate(-50%, -50%);
+	width: 250px;
+	height:auto;
+	background-color: #f8f8f8;
+	border-radius: 5px;
+	padding: 10px;
+	box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.2);
+	z-index: 9999;
+}
+.modal-content{
+}
+.visitInput{
+	width: 100%;
+	flex-grow: 1;
+	padding: 2px;
+	border: 1px solid rgba(111, 152, 187, 0.5);
+	padding: 2px;
+	background-color: white;
+	font-size: 15px; /* Центрируем элементы по вертикали */
+	border-radius: 3px;
+	line-height: 24px; /* Высота строки */
+	height: 24px; /* Высота инпутов */
+}
+
+.calendar-wrapper {
+	width: 360px;
+	margin: 3em auto;
+	padding: 2em;
+	border: 1px solid #dcdcff;
+	border-radius: 5px;
+	background: #fff;
+}
+table {
+	clear: both;
+	width: 100%;
+	border: 1px solid #dcdcff;
+	border-radius: 3px;
+	border-collapse: collapse;
+	color: #444;
+}
+td {
+	height: 48px;
+	text-align: center;
+	vertical-align: middle;
+	border-right: 1px solid #dcdcff;
+	border-top: 1px solid #dcdcff;
+	width: 14.28571429%;
+}
+thead td {
+	border: none;
+	color: #28283b;
+	text-transform: uppercase;
+	font-size: 1.5em;
+}
+td.today {
+	font-weight: 700;
+	color: #28283b;
+	font-size: 1.5em;
+}
+td.not-current {
+	color: #c0c0c0;
+}
+#btnPrev {
+	float: left;
+	margin-bottom: 20px;
+}
+#btnPrev:before {
+	content: '\f104';
+	font-family: FontAwesome;
+	padding-right: 4px;
+}
+#btnNext {
+	float: right;
+	margin-bottom: 20px;
+}
+#btnNext:after {
+	content: '\f105';
+	font-family: FontAwesome;
+	padding-left: 4px;
+}
+#btnPrev,
+#btnNext {
+	background: transparent;
+	border: none;
+	outline: none;
+	font-size: 1em;
+	color: #c0c0c0;
+	cursor: pointer;
+	font-family: sans-serif;
+	text-transform: uppercase;
+	transition: all 0.3s ease;
+}
+#btnPrev:hover,
+#btnNext:hover {
+	color: #28283b;
+	font-weight: bold;
+}
+.visitlast,.visitFeature{
+
+	border: 1px solid rgba(111, 152, 187, 0.5);
+	padding: 5px;
+	background-color: white;
+	width: auto;
+	min-width: 200px;
+	height: auto;
+	margin-right: 20px;
+	border-radius: 10px;
+}
 .file-name-inp{
 	width: 150px;
+}
+.visit-name{
+	width: 80px;
+}
+.file-name-list {
+	display: flex;
+	flex-direction: row;
+	margin-bottom: 5px;
+}
+.file-name-data{
+	display: flex;
+	text-align: center;
+	margin-bottom: 5px;
+}
+#modal_calendar {
+	width: 200px;
+	height: 200px;
+	background-color: rgba(10, 8, 8, 0.26);
 }

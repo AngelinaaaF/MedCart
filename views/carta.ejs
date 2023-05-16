@@ -15,7 +15,38 @@
     <link rel="stylesheet"
           href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/css/selectize.bootstrap3.min.css"
           integrity="sha256-ze/OEYGcFbPRmvCnrSeKbRTtjG4vGLHXgOqsyLFTRjg=" crossorigin="anonymous"/>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.8.335/pdf.min.js"></script>
+    <script>
+        async function previewPdf(filepath, block) {
 
+            const canvas = document.getElementById(block);
+            const context = canvas.getContext('2d');
+
+            const task = pdfjsLib.getDocument(filepath);
+            const pdf = await task.promise;
+            const page = await pdf.getPage(1);
+
+            const scale = 0.35;
+            const viewport = page.getViewport({scale: scale,});
+            const outputScale = window.devicePixelRatio || 1;
+
+            canvas.width = Math.floor(viewport.width * outputScale);
+            canvas.height = Math.floor(viewport.height * outputScale);
+            canvas.style.width = Math.floor(viewport.width) + "px";
+            canvas.style.height = Math.floor(viewport.height) + "px";
+
+            const transform = outputScale !== 1
+                ? [outputScale, 0, 0, outputScale, 0, 0]
+                : null;
+
+            const renderContext = {
+                canvasContext: context,
+                transform: transform,
+                viewport: viewport
+            };
+            page.render(renderContext);
+        }
+    </script>
 </head>
 <body class="home">
 <div id="wrap">
@@ -112,7 +143,7 @@
                                 class="fa fa-th-large"></i></div>
                 </div>
                 <div id="gallery" style="display:flex;">
-                    <% files.forEach(function(file) { %>
+                    <% files.reverse().forEach(function(file) { %>
                         <div class="file">
                             <% if(file.file_type === 'png' || file.file_type === 'jpeg' || file.file_type === 'jpg')
                             { %>
@@ -120,16 +151,22 @@
                                     <img src="<%= file.file_path %>" alt="<%= file.name_conclusion %>"/>
                                 </a>
                             <% } else if (file.file_type === 'pdf') { %>
-                                <img data-pdf-thumbnail-file=<%= file.file_path %> width="100%" height="600px"/>
-                            <% } else if (file.file_type === 'doc' || file.file_type === 'docx') { %>
+                                <a href="/carta/carta_file/<%= file.id_conclusion %>" rel="noopener noreferrer">
+                                    <canvas id="canvas_<%= file.id_conclusion %>"> </canvas></a>
+                                <script>
+                                    previewPdf("file\\upload\\<%= file.file_path %>", "canvas_<%= file.id_conclusion %>");
+                                </script>
+                            <% }
+                            else if (file.file_type === 'doc' || file.file_type === 'docx') { %>
+                            <a href="/carta/carta_file/<%= file.id_conclusion %>" rel="noopener noreferrer">
                                 <iframe src="https://docs.google.com/gview?url=<%= file.file_path %>&embedded=true"
                                         style="width:100%; height:600px;" frameborder="0"></iframe>
-                            <% } else { %>
-                                <div class="file-icon">
-                                    <a class="fa fa-file">Скачать</a>
-                                </div>
-                            <% } %>
-                            <div class="file-name"><%= file.name_conclusion %></div>
+                                <% } else { %>
+                                    <div class="file-icon">
+                                        <a class="fa fa-file">Скачать</a>
+                                    </div>
+                                <% } %>
+                                <div class="file-name"><%= file.name_conclusion %></div>
                         </div>
                     <% }); %>
                 </div>
@@ -142,8 +179,13 @@
                                         <img src="<%= file.file_path %>" alt="<%= file.name_conclusion %>"/>
                                     </a>
                                 <% } else if (file.file_type === 'pdf') { %>
-                                    <img data-pdf-thumbnail-file=<%= file.file_path %> width="100%" height="600px"/>
-                                <% } else if (file.file_type === 'doc' || file.file_type === 'docx') { %>
+                                    <a href="/carta/carta_file/<%= file.id_conclusion %>" rel="noopener noreferrer">
+
+                                        <canvas id="canvas_list<%= file.id_conclusion %>"></canvas> </a>
+                                        <script>
+                                            previewPdf("file\\upload\\<%= file.file_path %>", "canvas_list<%= file.id_conclusion %>");
+                                        </script>
+                                    <% } else if (file.file_type === 'doc' || file.file_type === 'docx') { %>
                                     <iframe src="https://docs.google.com/gview?url=<%= file.file_path %>&embedded=true"
                                             style="width:100%; height:600px;" frameborder="0"></iframe>
                                 <% } else { %>
@@ -153,13 +195,13 @@
                                 <% } %>
                             </div>
                             <div class="infifile">
-                                <div class="file-name-list"
-                                     style="justify-content: flex-end; display: flex; color: #608096; margin-right: 10px;"><%= file.data_conclusion %></div>
+                                <div class="dataname" style="display: flex;flex-direction: row; justify-content: space-between">
                                 <div class="file-name-list">
-                                    <div class="file-name-inp">Название:</div>
-                                    <div class="name-inp"><%= file.name_conclusion %></div>
+                                    <div class="name-inp" style="font-weight: bolder;font-size: 16px;margin-left: 40px;"><%= file.name_conclusion %></div>
                                 </div>
-
+                                    <div class="file-name-list"
+                                         style="justify-content: flex-end; display: flex; color: #608096; margin-right: 10px;"><%= file.data_conclusion %></div>
+                                </div>
                                 <div class="file-name-list">
                                     <div class="file-name-inp">Тип записи:</div>
                                     <div class="name-inp"><%= file.type_conclusion %></div>
@@ -215,7 +257,7 @@
                                 <% if (file.comment) { %>
                                     <div class="file-name-list">
                                         <div class="file-name-inp">Дополнительно:</div>
-                                        <div class="name-inp"><%= file.type_info.comment %></div>
+                                        <div class="name-inp"><%= file.comment %></div>
                                     </div>
                                 <% } %>
                             </div>
@@ -383,7 +425,7 @@
                     <div class="typetwo">
 
                         <input type="text" id="type_conclusion" class="profileInput" name="type_conclusion"
-                               list="type_conclusion_list" placeholder="Выберите тип записи">
+                               list="type_conclusion_list" placeholder="Выберите тип записи" required>
                         <datalist id="type_conclusion_list">
                             <option value="Анализы">
                             <option value="Аллергия">
@@ -403,7 +445,7 @@
                             <option value="Другое">
                         </datalist>
                         <input type="text" id="type_doctor" class="profileInput" name="type_doctor"
-                               list="type_doctor_list" placeholder="Выберите доктора">
+                               list="type_doctor_list" placeholder="Выберите доктора" required>
                         <datalist id="type_doctor_list">
                             <option>Аллерголог</option>
                             <option>Дерматовенеролог</option>
@@ -498,169 +540,164 @@
                     </div>
                 </div>
             </form>
-            </form>
         </div>
-        <script>
-            const gallery_selector = document.querySelector('#gallery');
-            const files = <%= JSON.stringify(files) %>;
-
-            files.forEach(function (file) {
-                const fileDiv = gallery_selector.querySelector(`[alt="${file.name}"]`);
-                if (fileDiv) {
-                    fileDiv.parentNode.removeChild(fileDiv);
-                }
-            });
-
-        </script>
-        <script>
-            var addRecordBtn = document.getElementById("add-record-btn");
-            var gallery = document.getElementById("MainBut");
-            var form = document.getElementById("upload-form");
-            var myInput = document.getElementById("filt-and-no");
-            var filterandsort = document.getElementById("galery-sort");
+    </div>
+</div>
+<script>
+    var addRecordBtn = document.getElementById("add-record-btn");
+    var gallery = document.getElementById("MainBut");
+    var form = document.getElementById("upload-form");
+    var myInput = document.getElementById("filt-and-no");
+    var filterandsort = document.getElementById("galery-sort");
 
 
-            function toggleForm() {
-                form.style.display = form.style.display === "none" ? "block" : "none";
-                gallery.style.display = gallery.style.display === "none" ? "block" : "none";
-                addRecordBtn.style.display = "none";
-                myInput.style.display = myInput.style.display === "none" ? "block" : "none";
-                filterandsort.style.display = filterandsort.style.display === "none" ? "block" : "none";
+    function toggleForm() {
+        form.style.display = form.style.display === "none" ? "block" : "none";
+        gallery.style.display = gallery.style.display === "none" ? "block" : "none";
+        addRecordBtn.style.display = "none";
+        myInput.style.display = myInput.style.display === "none" ? "block" : "none";
+        filterandsort.style.display = filterandsort.style.display === "none" ? "block" : "none";
 
+    }
+
+    function hideForm() {
+        form.style.display = "none";
+        gallery.style.display = "block";
+        addRecordBtn.style.display = "block";
+        myInput.style.display = "block"
+        filterandsort.style.display = "block"
+        form.reset(); // добавляем эту строку для очистки формы
+    }
+</script>
+<script>
+    const buttons = document.querySelectorAll('.filter-btn');
+
+    // При нажатии на кнопку
+    buttons.forEach(button => {
+        button.addEventListener('click', function () {
+            // Убираем класс "active" у всех кнопок
+            buttons.forEach(btn => btn.classList.remove('active'));
+            // Добавляем класс "active" только нажатой кнопке
+            this.classList.add('active');
+        });
+    });
+</script>
+<script>
+    function Search(value) {
+        const params = new URLSearchParams(window.location.search);
+        params.set('search_by', value);
+        const newUrl = `${window.location.pathname}?${params.toString()}`;
+        window.location.href = newUrl;
+        const selectizeControl = $('#myInput select')[0].selectize;
+        selectizeControl.clear();
+    }
+
+    /*подсчевиваем кнопку где сейчас пользователь*/
+    const params = new URLSearchParams(window.location.search);
+    const filterValue = params.get('filter_value');
+    // добавляем класс "active" к кнопке с соответствующим значением
+    if (filterValue) {
+        const buttons = document.querySelectorAll('.filter-btn');
+        buttons.forEach((button) => {
+            if (button.innerText === filterValue) {
+                button.classList.add('active');
             }
+        });
+    } else {
+        const buttonNoFilter = document.querySelector('.filter-btn-no');
+        buttonNoFilter.classList.add('active');
+    }
 
-            function hideForm() {
-                form.style.display = "none";
-                gallery.style.display = "block";
-                addRecordBtn.style.display = "block";
-                myInput.style.display = "block"
-                filterandsort.style.display = "block"
-                form.reset(); // добавляем эту строку для очистки формы
-            }
-        </script>
-        <script>
-            const buttons = document.querySelectorAll('.filter-btn');
+    function setFilter(filterValue) {
+        const params = new URLSearchParams(window.location.search);
+        params.set('filter_by', 'type_conclusion');
+        params.set('filter_value', filterValue);
+        const newUrl = `${window.location.origin}${window.location.pathname}?${params.toString()}`;
 
-            // При нажатии на кнопку
-            buttons.forEach(button => {
-                button.addEventListener('click', function () {
-                    // Убираем класс "active" у всех кнопок
-                    buttons.forEach(btn => btn.classList.remove('active'));
-                    // Добавляем класс "active" только нажатой кнопке
-                    this.classList.add('active');
-                });
-            });
-        </script>
-        <script>
-            function Search(value) {
-                const params = new URLSearchParams(window.location.search);
-                params.set('search_by', value);
-                const newUrl = `${window.location.pathname}?${params.toString()}`;
-                window.location.href = newUrl;
-                const selectizeControl = $('#myInput select')[0].selectize;
-                selectizeControl.clear();
-            }
+        window.location.href = newUrl;
+    }
 
-            /*подсчевиваем кнопку где сейчас пользователь*/
-            const params = new URLSearchParams(window.location.search);
-            const filterValue = params.get('filter_value');
-            // добавляем класс "active" к кнопке с соответствующим значением
-            if (filterValue) {
-                const buttons = document.querySelectorAll('.filter-btn');
-                buttons.forEach((button) => {
-                    if (button.innerText === filterValue) {
-                        button.classList.add('active');
-                    }
-                });
-            } else {
-                const buttonNoFilter = document.querySelector('.filter-btn-no');
-                buttonNoFilter.classList.add('active');
-            }
+    function setSort(sortBy, revers) {
+        const params = new URLSearchParams(window.location.search);
+        params.set('sorted_by', sortBy);
+        if (revers) {
+            params.set('revers', revers);
+        }
+        const newUrl = `${window.location.pathname}?${params.toString()}`;
+        window.location.href = newUrl;
+    }
 
-            function setFilter(filterValue) {
-                const params = new URLSearchParams(window.location.search);
-                params.set('filter_by', 'type_conclusion');
-                params.set('filter_value', filterValue);
-                const newUrl = `${window.location.origin}${window.location.pathname}?${params.toString()}`;
+    function FromTo(filterValue, filterEnd) {
+        const params = new URLSearchParams(window.location.search);
+        params.set('filter_by', 'data_conclusion');
+        params.set('filter_value', filterValue);
+        params.set('filter_end', filterEnd);
+        const newUrl = `${window.location.pathname}?${params.toString()}`;
+        window.location.href = newUrl;
 
-                window.location.href = newUrl;
-            }
+    }
+</script>
+<script>
+    const sortLinkdoc = document.getElementById("sort-link-doc");
+    const sortDropdowndoc = document.getElementById("sort-dropdown-doc");
 
-            function setSort(sortBy, revers) {
-                const params = new URLSearchParams(window.location.search);
-                params.set('sorted_by', sortBy);
-                if (revers) {
-                    params.set('revers', revers);
-                }
-                const newUrl = `${window.location.pathname}?${params.toString()}`;
-                window.location.href = newUrl;
-            }
+    sortLinkdoc.addEventListener("click", function () {
+        if (sortDropdowndoc.style.display === "block") {
+            sortDropdowndoc.style.display = "none";
+        } else {
+            sortDropdowndoc.style.display = "block";
+        }
+    });
 
-            function FromTo(filterValue, filterEnd) {
-                const params = new URLSearchParams(window.location.search);
-                params.set('filter_by', 'data_conclusion');
-                params.set('filter_value', filterValue);
-                params.set('filter_end', filterEnd);
-                const newUrl = `${window.location.pathname}?${params.toString()}`;
-                window.location.href = newUrl;
+    const sortLink = document.getElementById("sort-link");
+    const sortDropdown = document.getElementById("sort-dropdown");
 
-            }
-        </script>
-        <script>
-            const sortLinkdoc = document.getElementById("sort-link-doc");
-            const sortDropdowndoc = document.getElementById("sort-dropdown-doc");
+    sortLink.addEventListener("click", function () {
+        if (sortDropdown.style.display === "block") {
+            sortDropdown.style.display = "none";
+        } else {
+            sortDropdown.style.display = "block";
+        }
+    });
+    const sortLinkowdata = document.getElementById("sort-link-owdata");
+    const sortDropdownowdata = document.getElementById("sort-dropdown-owdata");
 
-            sortLinkdoc.addEventListener("click", function () {
-                if (sortDropdowndoc.style.display === "block") {
-                    sortDropdowndoc.style.display = "none";
-                } else {
-                    sortDropdowndoc.style.display = "block";
-                }
-            });
+    sortLinkowdata.addEventListener("click", function () {
+        if (sortDropdownowdata.style.display === "block") {
+            sortDropdownowdata.style.display = "none";
+        } else {
+            sortDropdownowdata.style.display = "block";
+        }
+    });
 
-            const sortLink = document.getElementById("sort-link");
-            const sortDropdown = document.getElementById("sort-dropdown");
+    const sortLinktypedoc = document.getElementById("sort-link-typedoc");
+    const sortDropdowntypedoc = document.getElementById("sort-dropdown-typedoc");
 
-            sortLink.addEventListener("click", function () {
-                if (sortDropdown.style.display === "block") {
-                    sortDropdown.style.display = "none";
-                } else {
-                    sortDropdown.style.display = "block";
-                }
-            });
-            const sortLinkowdata = document.getElementById("sort-link-owdata");
-            const sortDropdownowdata = document.getElementById("sort-dropdown-owdata");
+    sortLinktypedoc.addEventListener("click", function () {
+        if (sortDropdowntypedoc.style.display === "block") {
+            sortDropdowntypedoc.style.display = "none";
+        } else {
+            sortDropdowntypedoc.style.display = "block";
+        }
+    });
+    const sortLinkdata = document.getElementById("sort-link-data");
+    const sortDropdowndata = document.getElementById("sort-dropdown-data");
 
-            sortLinkowdata.addEventListener("click", function () {
-                if (sortDropdownowdata.style.display === "block") {
-                    sortDropdownowdata.style.display = "none";
-                } else {
-                    sortDropdownowdata.style.display = "block";
-                }
-            });
+    sortLinkdata.addEventListener("click", function () {
+        if (sortDropdowndata.style.display === "block") {
+            sortDropdowndata.style.display = "none";
+        } else {
+            sortDropdowndata.style.display = "block";
+        }
+    });
+</script>
+<script>
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('needaddform') === 'true') {
+        toggleForm();
+    }
 
-            const sortLinktypedoc = document.getElementById("sort-link-typedoc");
-            const sortDropdowntypedoc = document.getElementById("sort-dropdown-typedoc");
-
-            sortLinktypedoc.addEventListener("click", function () {
-                if (sortDropdowntypedoc.style.display === "block") {
-                    sortDropdowntypedoc.style.display = "none";
-                } else {
-                    sortDropdowntypedoc.style.display = "block";
-                }
-            });
-            const sortLinkdata = document.getElementById("sort-link-data");
-            const sortDropdowndata = document.getElementById("sort-dropdown-data");
-
-            sortLinkdata.addEventListener("click", function () {
-                if (sortDropdowndata.style.display === "block") {
-                    sortDropdowndata.style.display = "none";
-                } else {
-                    sortDropdowndata.style.display = "block";
-                }
-            });
-        </script>
-
+</script>
 </body>
 
 <!--end cache-images-->
