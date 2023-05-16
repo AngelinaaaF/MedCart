@@ -414,8 +414,11 @@
         <div id="upload-form" style="display: none;">
             <form action="/file/upload" method="POST" enctype="multipart/form-data">
                 <div class="info-concl">
-                    <h2 style="text-align: left; margin: 15px 0px 15px 30px ;">Добавление новой записи</h2>
-
+                    <h2 style="text-align: left; margin: 15px 0px 15px 30px ;">Добавление новой записи
+                        <%if (visit_id) { %>
+                            <input type="text" name="visit_id" style="none" value="<%= visit_id.replace(/"/g, '') %>">
+                        <% } %>
+                    </h2>
                     <hr style="width: 100%;border-bottom: 2px solid #8bb9d5; margin-bottom: 20px;">
                     <div class="profileField">
                         <label for="name_conclusion" class="profileLabel">Название документа:</label>

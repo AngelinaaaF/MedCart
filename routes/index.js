@@ -521,7 +521,7 @@ router.get('/carta', function (req, res, next) {
             })
             // Pass the files array to the template
             res.render('carta', {
-                files: results, needaddform: req.query.needaddform
+                files: results, needaddform: req.query.needaddform,visit_id: req.query.visit_id
             });
         });
     } else {
@@ -554,10 +554,14 @@ router.post('/file/upload', function (req, res, next) {
     let name_conclusion = req.body.name_conclusion;
     let type_conclusion = req.body.type_conclusion;
     let data_conclusion = req.body.data_conclusion;
+    let visit_id = req.body.visit_id;
     let type_doctor = req.body.type_doctor;
     let filedata = req.file;
     if (!type_conclusion) {
         type_conclusion = null;
+    }
+    if (!visit_id) {
+        visit_id = null;
     }
     if (!data_conclusion) {
         data_conclusion = null;
@@ -576,7 +580,15 @@ router.post('/file/upload', function (req, res, next) {
             let id_conclusion = results[0]['id_conclusion'];
             connection.query('INSERT INTO files (user_id, file_path,id_conclusion,file_type) VALUES (?, ?,?,?)', [req.session.user_id, path, [results[0]['id_conclusion']], fileType], function (error, results, fields) {
                 if (error) throw error;
+                console.log(req);
+                if(!visit_id){
                 res.redirect('/file/upload/notedata/' + id_conclusion)
+                }
+                else{ connection.query('UPDATE visit SET id_conclusion=? WHERE visit_id=?', [id_conclusion, visit_id], function (error, results, fields) {
+                    if (error) throw error;
+                    res.redirect('/file/upload/notedata/' + id_conclusion)
+                });
+                }
             });
         });
     });

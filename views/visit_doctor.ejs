@@ -35,89 +35,38 @@
         </div>
     </div>
     <div id="mainVisit">
-        <div class="button-add-note" style="display:flex;flex-direction: row-reverse;">
-            <button id="add-visit-btn" class="btn">Добавить запись</button>
-            <div id="modal-visit">
-                <div class="modal-content">
-                    <span id="close-modal-btn" class="close" style="text-align: left">&times;</span>
-                    <form id="visit_form" method="post" action="/visit_doctor" style="margin-top: 0px">
-                        <label for="name_visit">Название:</label>
-                        <input id="name_visit" class="visitInput" name="name_visit" type="text" required>
-                        <label for="data_visit">Дата и время приема:</label>
-                        <input id="data_visit" class="visitInput" name="data_visit" type="datetime-local" required>
-                        <label for="name_doctor">Врач:</label>
-                        <input id="name_doctor" class="visitInput" name="name_doctor" type="text">
-                        <label for="place">Место:</label>
-                        <input id="place" class="visitInput" name="place" type="text">
-                        <button type="submit" class="butonok" style="margin-top: 10px; width: 75%; margin-left: 35px">
-                            Добавить
-                        </button>
-                    </form>
-                </div>
+        <div class="button-add-note" style="display: flex; justify-content: space-between; align-items: flex-start;">
+            <div class="calendar-wrapper">
+                <button id="btnPrev" type="button">Предыдущий</button>
+                <button id="btnNext" type="button">Следующий</button>
+                <div id="divCal"></div>
+            </div>
+            <button id="add-visit-btn" class="btn" style="align-self: flex-start; width: 300px; margin-right: 100px">Добавить запись</button>
+        </div>
+        <div id="modal-visit">
+            <div class="modal-content">
+                <span id="close-modal-btn" class="close" style="text-align: left">&times;</span>
+                <form id="visit_form" method="post" action="/visit_doctor" style="margin-top: 0px">
+                    <label for="name_visit">Название:</label>
+                    <input id="name_visit" class="visitInput" name="name_visit" type="text" required>
+                    <label for="data_visit">Дата и время приема:</label>
+                    <input id="data_visit" class="visitInput" name="data_visit" type="datetime-local" required>
+                    <label for="name_doctor">Врач:</label>
+                    <input id="name_doctor" class="visitInput" name="name_doctor" type="text">
+                    <label for="place">Место:</label>
+                    <input id="place" class="visitInput" name="place" type="text">
+                    <button type="submit" class="butonok" style="margin-top: 10px; width: 75%; margin-left: 35px">
+                        Добавить
+                    </button>
+                </form>
             </div>
         </div>
-        <div class="visits1" style="display: flex; justify-content: flex-end;">
-            <div class="visits" style="display:flex; flex-direction: row;justify-content:space-around ">
-                <div class="visitlast" style="width: 500px; height: 500px;">
-                    <% visiters.forEach(function(visiters) {
-                    if (visiters.data_visit) {
-                        var currentDate = new Date();
-                        var visitDate = new Date(visiters.data_visit);
-                    %>
-                    <% if (visitDate < currentDate) { %>
-                        <li class="listvisit">
-                            <div class="visit-name-data">
-                                <div class="name-inp"
-                                     style="color: #b61427; font-weight: bold; text-align: center"><%= visitDate.toLocaleString('ru-RU', {
-                                        day: 'numeric',
-                                        month: 'long',
-                                        year: 'numeric',
-                                        hour: '2-digit',
-                                        minute: '2-digit'
-                                    }) %></div>
-                            </div>
-                            <% if (visiters.name_visit) { %>
-                                <div class="visit-name-data">
-                                    <div class="name-inp"
-                                         style="text-align: center;font-weight: bolder	;"><%= visiters.name_visit %></div>
-                                    <hr style="color:black;">
-                                </div>
-                            <% }
-                            if (visiters.name_doctor) { %>
-                                <div class="visit-name-list">
-                                    <div class="visit-name">Врач:</div>
-                                    <div class="name-inp"><%= visiters.name_doctor %></div>
-                                </div>
-                            <% } %>
-                            <% if (visiters.place) { %>
-                                <div class="visit-name-list">
-                                    <div class="visit-name">Клиника:</div>
-                                    <div class="name-inp"><%= visiters.place %></div>
-                                </div>
-                            <% } %>
-                        </li>
-                        <% if (visiters.id_conclusion) { %>
-                            <a href="/carta/carta_file/<%= visiters.id_conclusion %>" class="butonok">Посмотреть</a>
-                        <% }else { %>
-                            <a href="/carta?needaddform=true" class="butonok">Добавить</a>
-                        <% } %>
-                    <% }
-                    }
-                    }); %>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="calendar-wrapper">
-        <button id="btnPrev" type="button">Предыдущий</button>
-        <button id="btnNext" type="button">Следующий</button>
-        <div id="divCal"></div>
-    </div>
-    <div id="modal_calendar" class="modal">
+
+
+
+        <div id="modal_calendar" class="modal" style="display: none;flex-direction: column">
         <div class="modal-content">
-            <label for="name_visit">Название:</label>
-            <label for="data_visit">Дата и время приема:</label>
-       <label for="name_doctor">Врач:</label>
+
         </div>
     </div>
 
@@ -250,6 +199,7 @@
             var chk = new Date();
             var chkY = chk.getFullYear();
             var chkM = chk.getMonth();
+
             function GetVisit(visiters, chkY, chkM, i) {
                 for (let a = 0; a < visiters.length; a++) {
                     const dateString = visiters[a].data_visit;
@@ -264,7 +214,7 @@
                     console.log("Год:", year);
 
                     if (day === i && month === chkM && year === chkY) {
-                        return true;
+                        return visiters[a]
                     }
                 }
 
@@ -274,13 +224,13 @@
             let visit = GetVisit(this.visiters, this.currYear, this.currMonth, i);
             if (chkY == this.currYear && chkM == this.currMonth && i == this.currDay) {
                 if (visit) {
-                    html += '<td class="normal" style="background: #b61427" onmouseover="openModal(visiters, event)" onmouseout="closeModal()">' + i + '</td>';
+                    html += '<td class="normal" style="background: #b61427" onmouseenter="   openModal(visit, event)">' + i + '</td>';
                 } else {
                     html += '<td class="today">' + i + '</td>';
                 }
             } else {
                 if (visit) {
-                    html += '<td class="normal" style="background: #b61427" onmouseover="openModal(this.visiters, event)" onmouseout="closeModal()">' + i + '</td>';
+                    html += '<td class="normal" style="background: #b61427" onmouseenter="let visit = {\'data_visit\':\'' +visit.data_visit+'\',\'name_visit\':\'' +visit.name_visit+'\',\'name_doctor\':\'' +visit.name_doctor+'\',\'place\':\'' +visit.place+'\',\'id_conclusion\':\'' +visit.id_conclusion+'\',\'visit_id\':\'' +visit.visit_id+'\'}; openModal(visit, event)">' + i + '</td>';
                 } else {
                     html += '<td class="normal">' + i + '</td>';
                 }
@@ -327,25 +277,55 @@
     }
 </script>
 <script>
-    function openModal(visiters,eventer) {
+    function openModal(visiters, eventer) {
         console.log(visiters)
         const modal_calendar = document.getElementById('modal_calendar');
+        const date = new Date(visiters.data_visit); // Создаем объект Date из строки с датой
 
+        const hours = date.getHours();
+        const minutes = date.getMinutes();
 
-        // Открытие модального окна
-        modal_calendar.style.display = 'block';
-        const x = window.event.clientX;
-        const y = window.event.clientY;
+        const time = `${hours}:${minutes}`;
+        modal_calendar.innerHTML = `
+<div class="visit-cal-name" style="text-align:center;">${visiters.name_visit} ${time}</div>
+  <div class="visit-cal-name">Доктор: ${visiters.name_doctor}</div>
+  ${visiters.place !== 'null' ? `<div class="visit-cal-name">Место: ${visiters.place}</div>` : ''}
+  ${visiters.id_conclusion !== 'null' ? `<a href="/carta/carta_file/${visiters.id_conclusion}" class="butonok">Посмотреть</a>` : `<a href="/carta?needaddform=true&visit_id=${visiters.visit_id}" class="butonok">Добавить</a>`}
+`;
+        const currentDate = new Date(); // Текущая дата
+        const visitDate = new Date(visiters.data_visit); // Дата из visiters.data_visit
+
+        if (visitDate > currentDate) {
+            modal_calendar.innerHTML = `
+    <div class="visit-cal-name" style="text-align:center;">${visiters.name_visit} ${time}</div>
+    ${visiters.name_doctor !== 'null' ? ` <div class="visit-cal-name">Доктор: ${visiters.name_doctor}</div>` : ''}
+    ${visiters.place !== 'null' ? `<div class="visit-cal-name">Место: ${visiters.place}</div>` : ''}
+  `;
+        } else {
+            modal_calendar.innerHTML = `
+    <div class="visit-cal-name" style="text-align:center;">${visiters.name_visit} ${time}</div>
+    ${visiters.name_doctor !== 'null' ? ` <div class="visit-cal-name">Доктор: ${visiters.name_doctor}</div>` : ''}
+    ${visiters.place !== 'null' ? `<div class="visit-cal-name">Место: ${visiters.place}</div>` : ''}
+    ${visiters.id_conclusion !== 'null' ? `<a href="/carta/carta_file/${visiters.id_conclusion}" class="butonok">Посмотреть</a>` : `<a href="/carta?needaddform=true&visit_id=${visiters.visit_id}" class="butonok">Добавить</a>`}
+  `;}
+        const x = eventer.clientX;
+        const y = eventer.clientY;
         modal_calendar.style.left = x + 'px';
         modal_calendar.style.top = y + 'px';
+        modal_calendar.style.display = 'block';
+
+        modal_calendar.addEventListener('mouseleave', function () {
+            modal_calendar.style.display = 'none';
+        });
+
+        modal_calendar.addEventListener('mouseenter', function () {
+            modal_calendar.addEventListener('mouseleave', function () {
+                modal_calendar.style.display = 'none';
+            });
+        });
     }
 
-    function closeModal() {
-        const modal_calendar = document.getElementById('modal_calendar');
 
-        // Закрытие модального окна
-        modal_calendar.style.display = 'none';
-    }
 </script>
 </body>
 </html>
