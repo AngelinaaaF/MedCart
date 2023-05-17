@@ -6,6 +6,7 @@
     <link type="text/css" rel="stylesheet" href="stylesheets/style.css"/>
     <link type="text/css" rel="stylesheet" href="stylesheets/skin.css"/>
     <script src='https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js'></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"/>
 </head>
 <body class="home">
 <div id="wrap">
@@ -35,17 +36,44 @@
         </div>
     </div>
     <div id="mainVisit">
-        <div class="button-add-note" style="display: flex; justify-content: space-between; align-items: flex-start;">
+        <div class="button-add-note" style="display: flex; justify-content: space-between; align-items: flex-start;position: relative">
             <div class="calendar-wrapper">
                 <button id="btnPrev" type="button">Предыдущий</button>
                 <button id="btnNext" type="button">Следующий</button>
                 <div id="divCal"></div>
             </div>
-            <button id="add-visit-btn" class="btn" style="align-self: flex-start; width: 300px; margin-right: 100px">Добавить запись</button>
+            <button id="add-visit-btn" class="btn" style="align-self: flex-start; width: 300px; margin-right: 150px">Добавить событие</button>
+            <button id="create-folder-btn" class="btn" style="position: absolute; bottom: 0; right: 0; margin-right: 150px;width: 300px">Создать папку</button>
+        </div>
+        <hr style="width: 80%;border-bottom: 2px solid #8bb9d5; margin-top: 15px">
+        <div id="create-folder-modal" class="modal-folder">
+            <div class="modal-content-folder">
+                <span id="close-modal-btn" class="close-folder">&times;</span>
+                <h2>Создать папку</h2>
+                <form method="post" action="/addfolder">
+                    <label for="name_folder">Название:</label>
+                    <input type="text" name="name_folder" id="name_folder" required>
+                    <label for="description">Описание:</label>
+                    <input type="textarea" name="description" id="description" >
+                    <button type="submit">Создать</button>
+                </form>
+            </div>
+        </div>
+        <div class="folders">
+            <ul class="folder-gallery">
+                <% folders.forEach(function(folder) { %>
+                    <li class="folder-item">
+                        <a href="/carta?folder=<%= folder.id_folder %>" rel="noopener noreferrer" class="folder-link">
+                            <i class="fas fa-folder folder-icon"></i>
+                            <%= folder.name_folder %>
+                        </a>
+                    </li>
+                <% }); %>
+            </ul>
         </div>
         <div id="modal-visit">
-            <div class="modal-content">
-                <span id="close-modal-btn" class="close" style="text-align: left">&times;</span>
+            <div class="modal-content-addvisit">
+                <span id="close-modal-btn-add" class="close-content" style="text-align: left;">&times;</span>
                 <form id="visit_form" method="post" action="/visit_doctor" style="margin-top: 0px">
                     <label for="name_visit">Название:</label>
                     <input id="name_visit" class="visitInput" name="name_visit" type="text" required>
@@ -72,7 +100,38 @@
 
 </div>
 </div>
+<script>
+    // Получаем элементы кнопки и модального окна
+    var createFolderBtn = document.getElementById("create-folder-btn");
+    var createFolderModal = document.getElementById("create-folder-modal");
 
+    // Обработчик события для открытия модального окна
+    createFolderBtn.addEventListener("click", function() {
+        createFolderModal.style.display = "block";
+    });
+
+    // Обработчик события для закрытия модального окна
+    var closeModalBtn = document.getElementById("close-modal-btn");
+    closeModalBtn.addEventListener("click", function() {
+        createFolderModal.style.display = "none";
+    });
+    form.addEventListener('submit', function (event) {
+        event.preventDefault();
+
+        // Получаем значения полей формы
+        const name_folder = document.getElementById('name_folder').value;
+        const description = document.getElementById('description').value;
+
+        // Выполняем необходимые действия с полученными значениями
+        // Например, отправляем данные на сервер или обрабатываем локально
+
+        // После выполнения действий закрываем модальное окно
+        modal.style.display = 'none';
+    });
+
+</script>
+</body>
+</html>
 <script>
     // получаем кнопку добавления записи
     const addVisitBtn = document.getElementById('add-visit-btn');
@@ -81,7 +140,7 @@
     const modal = document.getElementById('modal-visit');
 
     // получаем кнопку закрытия модального окна
-    const closeBtn = document.getElementById('close-modal-btn');
+    const closeBtn = document.getElementById('close-modal-btn-add');
     // добавляем обработчик события клика на кнопку добавления записи
     addVisitBtn.addEventListener('click', () => {
         // отображаем модальное окно
@@ -107,7 +166,6 @@
     });
 
 </script>
-
 <script>
     var Cal = function (divId) {
         //Сохраняем идентификатор div
@@ -306,7 +364,7 @@
     <div class="visit-cal-name" style="text-align:center;">${visiters.name_visit} ${time}</div>
     ${visiters.name_doctor !== 'null' ? ` <div class="visit-cal-name">Доктор: ${visiters.name_doctor}</div>` : ''}
     ${visiters.place !== 'null' ? `<div class="visit-cal-name">Место: ${visiters.place}</div>` : ''}
-    ${visiters.id_conclusion !== 'null' ? `<a href="/carta/carta_file/${visiters.id_conclusion}" class="butonok">Посмотреть</a>` : `<a href="/carta?needaddform=true&visit_id=${visiters.visit_id}" class="butonok">Добавить</a>`}
+${visiters.id_conclusion !== 'null' ? `<a href="/carta/carta_file/${visiters.id_conclusion}" class="butonok">Посмотреть</a>` : `<a href="/carta?needaddform=true&visit_id=${visiters.visit_id}&data_visit=${visiters.data_visit}" class="butonok">Добавить</a>`}
   `;}
         const x = eventer.clientX;
         const y = eventer.clientY;

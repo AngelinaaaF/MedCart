@@ -17,6 +17,8 @@
           integrity="sha256-ze/OEYGcFbPRmvCnrSeKbRTtjG4vGLHXgOqsyLFTRjg=" crossorigin="anonymous"/>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.8.335/pdf.min.js"></script>
     <script>
+
+
         async function previewPdf(filepath, block) {
 
             const canvas = document.getElementById(block);
@@ -79,9 +81,85 @@
         <div id="MainBut">
             <div class="plusnote" style="display: flex;margin-bottom: 10px; align-items: center;">
                 <h2 style="margin-left: 30px; text-align: left; ">Медицинская карта</h2>
+                <% if(folder) { %>
+                    <h2 style="margin-left: 30px; text-align: left; "><%= folder.name_folder %></h2>
+                <% } %>
+
                 <button id="add-record-btn" onclick="toggleForm(); hideAddRecordBtn()">
                     <img src="images/addconcluc.png" class="add-item-image"/> Добавить запись
                 </button>
+                <% if(folder) { %>
+                    <button id="add-record-btn-to-folder" onclick="openChooseModal()">
+                        <img src="images/addconcluc.png" class="add-item-image"/> Выбрать в папку
+                    </button>
+                <% } %>
+                <div id="modal-for-choose" class="modal-for-choose">
+                    <div class="modal-content-choose">
+                        <span class="close-choose" onclick="closeChooseModal()">&times;</span>
+                        <h2>Выберите файлы</h2>
+                        <div id="gallery" style="display:flex;">
+                            <% not_filter_files.reverse().forEach(function(file) { %>
+                                <div class="file" onclick="selectFile('<%= file.id_conclusion %>')">
+                                    <% if(file.file_type === 'png' || file.file_type === 'jpeg' || file.file_type === 'jpg')
+                                    { %>
+                                            <img src="<%= file.file_path %>" alt="<%= file.name_conclusion %>" />
+                                        </a>
+                                    <% } else if (file.file_type === 'pdf') { %>
+                                        <a href="/carta/carta_file/<%= file.id_conclusion %>" rel="noopener noreferrer">
+                                            <canvas id="canvas_<%= file.id_conclusion %>"></canvas>
+                                        </a>
+                                        <script>
+                                            previewPdf("file\\upload\\<%= file.file_path %>", "canvas_<%= file.id_conclusion %>");
+                                        </script>
+                                    <% }
+                                    else if (file.file_type === 'doc' || file.file_type === 'docx') { %>
+                                    <a href="/carta/carta_file/<%= file.id_conclusion %>" rel="noopener noreferrer">
+                                        <iframe src="https://docs.google.com/gview?url=<%= file.file_path %>&embedded=true"
+                                                style="width:100%; height:600px;" frameborder="0"></iframe>
+                                        <% } else { %>
+                                            <div class="file-icon">
+                                                <a class="fa fa-file">Скачать</a>
+                                            </div>
+                                        <% } %>
+                                        <div class="file-name"><%= file.name_conclusion %></div>
+                                </div>
+                            <% }); %>
+                        </div>
+                    </div>
+                </div>
+                <script>
+                    // Открытие модального окна для выбора
+                    function openChooseModal() {
+                        var modal = document.getElementById("modal-for-choose");
+                        modal.style.display = "block";
+                    }
+
+                    // Закрытие модального окна для выбора
+                    function closeChooseModal() {
+                        var modal = document.getElementById("modal-for-choose");
+                        modal.style.display = "none";
+
+                    }
+
+                    // Массив для хранения выбранных файлов
+                    var selectedFiles = [];
+
+                    function selectFile(fileId) {
+                        var fileElement = document.getElementById("file_" + fileId);
+                        var fileIndex = selectedFiles.indexOf(fileId);
+
+                        if (fileIndex === -1) {
+                            // Файл не выбран, добавляем его в массив и отмечаем цветом
+                            selectedFiles.push(fileId);
+                            fileElement.style.backgroundColor = "lightblue";
+                        } else {
+                            // Файл уже выбран, удаляем его из массива и сбрасываем цвет
+                            selectedFiles.splice(fileIndex, 1);
+                            fileElement.style.backgroundColor = "";
+                        }
+                    }
+
+                </script>
             </div>
             <hr style="width: 100%;border-bottom: 2px solid #8bb9d5;">
             <div class="find" id="myInput">
@@ -152,7 +230,8 @@
                                 </a>
                             <% } else if (file.file_type === 'pdf') { %>
                                 <a href="/carta/carta_file/<%= file.id_conclusion %>" rel="noopener noreferrer">
-                                    <canvas id="canvas_<%= file.id_conclusion %>"> </canvas></a>
+                                    <canvas id="canvas_<%= file.id_conclusion %>"></canvas>
+                                </a>
                                 <script>
                                     previewPdf("file\\upload\\<%= file.file_path %>", "canvas_<%= file.id_conclusion %>");
                                 </script>
@@ -181,11 +260,12 @@
                                 <% } else if (file.file_type === 'pdf') { %>
                                     <a href="/carta/carta_file/<%= file.id_conclusion %>" rel="noopener noreferrer">
 
-                                        <canvas id="canvas_list<%= file.id_conclusion %>"></canvas> </a>
-                                        <script>
-                                            previewPdf("file\\upload\\<%= file.file_path %>", "canvas_list<%= file.id_conclusion %>");
-                                        </script>
-                                    <% } else if (file.file_type === 'doc' || file.file_type === 'docx') { %>
+                                        <canvas id="canvas_list<%= file.id_conclusion %>"></canvas>
+                                    </a>
+                                    <script>
+                                        previewPdf("file\\upload\\<%= file.file_path %>", "canvas_list<%= file.id_conclusion %>");
+                                    </script>
+                                <% } else if (file.file_type === 'doc' || file.file_type === 'docx') { %>
                                     <iframe src="https://docs.google.com/gview?url=<%= file.file_path %>&embedded=true"
                                             style="width:100%; height:600px;" frameborder="0"></iframe>
                                 <% } else { %>
@@ -195,10 +275,12 @@
                                 <% } %>
                             </div>
                             <div class="infifile">
-                                <div class="dataname" style="display: flex;flex-direction: row; justify-content: space-between">
-                                <div class="file-name-list">
-                                    <div class="name-inp" style="font-weight: bolder;font-size: 16px;margin-left: 40px;"><%= file.name_conclusion %></div>
-                                </div>
+                                <div class="dataname"
+                                     style="display: flex;flex-direction: row; justify-content: space-between">
+                                    <div class="file-name-list">
+                                        <div class="name-inp"
+                                             style="font-weight: bolder;font-size: 16px;margin-left: 40px;"><%= file.name_conclusion %></div>
+                                    </div>
                                     <div class="file-name-list"
                                          style="justify-content: flex-end; display: flex; color: #608096; margin-right: 10px;"><%= file.data_conclusion %></div>
                                 </div>
@@ -415,8 +497,13 @@
             <form action="/file/upload" method="POST" enctype="multipart/form-data">
                 <div class="info-concl">
                     <h2 style="text-align: left; margin: 15px 0px 15px 30px ;">Добавление новой записи
-                        <%if (visit_id) { %>
-                            <input type="text" name="visit_id" style="none" value="<%= visit_id.replace(/"/g, '') %>">
+                        <% if (visit_id) { %>
+                            <input type="text" name="visit_id" style="display: none;"
+                                   value="<%= visit_id.replace(/"/g, '') %>">
+                        <% } %>
+                        <% if (folder) { %>
+                            <input type="text" name="id_folder" style="display: none;"
+                                   value="<%= folder.id_folder %>">
                         <% } %>
                     </h2>
                     <hr style="width: 100%;border-bottom: 2px solid #8bb9d5; margin-bottom: 20px;">
@@ -478,8 +565,14 @@
                     <div class="profileField">
                         <label for="data_conclusion" class="profileLabel" style="margin-top:5px; ">Дата
                             заключения:</label>
-                        <input type="date" class="profileInput" style="margin-top:7px;box-shadow: 0 0 2px #3e9afe;"
-                               name="data_conclusion" placeholder="dd-mm-yyyy" pattern="\d{4}-\d{2}-\d{2}" required>
+                        <% if (data_visit) { %>
+                            <input type="date" class="profileInput" style="margin-top:7px;box-shadow: 0 0 2px #3e9afe;"
+                                   name="data_conclusion"
+                                   value="<%= data_visit.replace(/"/g, "").split("T")[0] %>" required>
+                        <% } else { %>
+                            <input type="date" class="profileInput" style="margin-top:7px;box-shadow: 0 0 2px #3e9afe;"
+                                   name="data_conclusion" placeholder="dd-mm-yyyy" pattern="\d{4}-\d{2}-\d{2}" required>
+                        <% } %>
                     </div>
                     <div class="profileFieldFile">
                         <label for="file" class="profileLabel">Файл для загрузки:</label>

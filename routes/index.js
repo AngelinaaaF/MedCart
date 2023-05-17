@@ -285,15 +285,19 @@ router.get('/home', function (req, res, next) {
     connection.query('SELECT * FROM visit where user_id =?', [req.session.user_id], function (error, results, fields) {
         console.log(results)
         if (results.length === 0) {
-            res.render('visit_doctor', {visit: []});
-            return;
+            res.render('home', {
+                files: []
+            });
+            console.log(req.body)
+            console.log(results)
+        } else {
+            console.log(req.body)
+            console.log(results)
+            // Pass the files array to the template
+            res.render('home', {
+                files: results
+            });
         }
-        console.log(req.body)
-        console.log(results)
-        // Pass the files array to the template
-        res.render('home', {
-            files: results
-        });
     });
 });
 
@@ -489,13 +493,23 @@ router.post('/delete_profile', (req, res) => {
 });
 
 const pdfThumbnail = require('pdf-thumbnail');
+const {query} = require("express");
+const {log} = require("debug");
 router.get('/carta', function (req, res, next) {
     console.log(req.session)
 
     // If the user is loggedin
     if (req.session.loggedin) {
+        let folder = null;
+        if (req.query.folder) {
+            connection.query('SELECT * from folder where id_folder = ?', [req.query.folder], function (error, results, fields) {
+                if (results) {
+                    folder = results[0];
+                }
+            });
+        }
         // Query the database for all files uploaded by the user
-        connection.query('SELECT files.file_path as file_path,conclusion.comment as comment, conclusion.type_doctor as type_doctor,conclusion.type_info as type_info, files.file_id as file_id, files.file_type as file_type, conclusion.name_conclusion as name_conclusion, conclusion.type_conclusion as type_conclusion, conclusion.data_conclusion as data_conclusion, conclusion.id_conclusion as id_conclusion FROM files left join conclusion on files.id_conclusion = conclusion.id_conclusion where files.user_id =?', [req.session.user_id], function (error, results, fields) {
+        connection.query('SELECT files.file_path as file_path, conclusion.folder as folder,conclusion.comment as comment, conclusion.type_doctor as type_doctor,conclusion.type_info as type_info, files.file_id as file_id, files.file_type as file_type, conclusion.name_conclusion as name_conclusion, conclusion.type_conclusion as type_conclusion, conclusion.data_conclusion as data_conclusion, conclusion.id_conclusion as id_conclusion FROM files left join conclusion on files.id_conclusion = conclusion.id_conclusion where files.user_id =?', [req.session.user_id], function (error, results, fields) {
             results.forEach(element => {
                 if (element['data_conclusion'] !== undefined && element['data_conclusion'] != null) {
                     element['data_conclusion'] = formatDate(element['data_conclusion'])
@@ -505,12 +519,23 @@ router.get('/carta', function (req, res, next) {
             console.log(error)
             console.log(results)
             if (results.length === 0) {
+                console.log(req)
                 res.render('carta', {
-                    files: [], needaddform: req.query.needaddform
+                    files: results,
+                    needaddform: req.query.needaddform,
+                    visit_id: req.query.visit_id,
+                    data_visit: req.query.data_visit,
+                    folder: folder
                 });
                 return;
             }
-            results = filter(req.query.filter_by, req.query.filter_value, req.query.filter_end, results)
+            let not_filter_files = results;
+            results = filter(req.query.filter_by, req.query.filter_value, req.query.filter_end, results);
+            let folder_temp = undefined;
+            if(req.query.folder){
+                folder_temp = parseInt(req.query.folder,10);
+            }
+            results = filter('folder', folder_temp, undefined, results)
             results = sort(req.query.sorted_by, req.query.revers, results)
             results = search(req.query.search_by, results)
             results.forEach(result => {
@@ -521,7 +546,12 @@ router.get('/carta', function (req, res, next) {
             })
             // Pass the files array to the template
             res.render('carta', {
-                files: results, needaddform: req.query.needaddform,visit_id: req.query.visit_id
+                files: results,
+                needaddform: req.query.needaddform,
+                visit_id: req.query.visit_id,
+                data_visit: req.query.data_visit,
+                folder: folder,
+                not_filter_files : not_filter_files
             });
         });
     } else {
@@ -556,6 +586,7 @@ router.post('/file/upload', function (req, res, next) {
     let data_conclusion = req.body.data_conclusion;
     let visit_id = req.body.visit_id;
     let type_doctor = req.body.type_doctor;
+    let id_folder = req.body.id_folder;
     let filedata = req.file;
     if (!type_conclusion) {
         type_conclusion = null;
@@ -574,21 +605,19 @@ router.post('/file/upload', function (req, res, next) {
     let path = req.file.path.replace('public\\', '');
     //берем тип
     let fileType = req.file.originalname.split('.').pop();
-    connection.query('INSERT INTO conclusion (type_doctor,name_conclusion, type_conclusion,data_conclusion,user_id) VALUES (?,?,?,?,?)', [type_doctor, name_conclusion, type_conclusion, data_conclusion, req.session.user_id], function (error, results, fields) {
+    connection.query('INSERT INTO conclusion (type_doctor,name_conclusion, type_conclusion,data_conclusion,user_id, folder) VALUES (?,?,?,?,?,?)', [type_doctor, name_conclusion, type_conclusion, data_conclusion, req.session.user_id, id_folder], function (error, results, fields) {
         if (error) throw error;
         connection.query('SELECT id_conclusion FROM conclusion WHERE name_conclusion = ?', [name_conclusion], function (error, results, fields) {
             let id_conclusion = results[0]['id_conclusion'];
             connection.query('INSERT INTO files (user_id, file_path,id_conclusion,file_type) VALUES (?, ?,?,?)', [req.session.user_id, path, [results[0]['id_conclusion']], fileType], function (error, results, fields) {
                 if (error) throw error;
                 console.log(req);
-                if(!visit_id){
+                if (visit_id) {
+                    connection.query('UPDATE visit SET id_conclusion=? WHERE visit_id=?', [id_conclusion, visit_id], function (error, results, fields) {
+                        if (error) throw error;
+                    });
+                }
                 res.redirect('/file/upload/notedata/' + id_conclusion)
-                }
-                else{ connection.query('UPDATE visit SET id_conclusion=? WHERE visit_id=?', [id_conclusion, visit_id], function (error, results, fields) {
-                    if (error) throw error;
-                    res.redirect('/file/upload/notedata/' + id_conclusion)
-                });
-                }
             });
         });
     });
@@ -726,30 +755,50 @@ router.post('/carta/carta_file/:id', function (req, res, next) {
 
 router.get('/visit_doctor', function (req, res, next) {
     console.log(req.session)
+    let folders;
     if (!req.session.loggedin) {
         res.redirect('/');
         return;
     }
+    connection.query('SELECT * FROM folder where user_id =?', [req.session.user_id], function (error, results, fields) {
+        console.log(results)
+        if (results.length === 0) {
+            folders = []
+            console.log(results)
+
+        } else {
+            folders = results
+            console.log(results)
+
+        }
+    });
     connection.query('SELECT * FROM visit where user_id =?', [req.session.user_id], function (error, results, fields) {
         console.log(results)
         if (results.length === 0) {
             res.render('visit_doctor', {
-                visiters: []
+                visiters: [], folders: folders
             });
-            return;
+        } else {
+            console.log(req.body)
+            // Pass the files array to the template
+            res.render('visit_doctor', {
+                visiters: results, folders: folders
+            });
         }
-        console.log(req.body)
-        // Pass the files array to the template
-        res.render('visit_doctor', {
-            visiters: results
-        });
     });
 });
+
 router.post('/visit_doctor', function (req, res, next) {
     console.log(req.session)
     if (!req.session.loggedin) {
         res.redirect('/');
         return;
+    }
+    if (!req.body.description) {
+        req.body.description = null;
+    }
+    if (!req.body.data_visit) {
+        req.body.data_visit = null;
     }
     if (!req.body.name_visit) {
         req.body.name_visit = null;
@@ -783,6 +832,27 @@ router.post('/visit_doctor', function (req, res, next) {
     }
 });
 
+router.post('/addfolder', function (req, res, next) {
+    console.log(req.session)
+    if (!req.session.loggedin) {
+        res.redirect('/');
+        return;
+    }
+    if (!req.body.description) {
+        req.body.description = null;
+    }
+    console.log(req.body)
+
+    connection.query('INSERT INTO folder (user_id,name_folder,description) VALUES (?, ?,?)', [req.session.user_id, req.body.name_folder, req.body.description], function (error, results, fields) {
+        if (error) throw error;
+        connection.query('SELECT * from folder where name_folder = ? AND user_id = ?', [req.body.name_folder, req.session.user_id], function (error, results, fields) {
+            if (error) throw error;
+            res.redirect('/carta?folder=' + results[0]['id_folder'])
+        });
+    });
+
+
+});
 module.exports = router;
 
 

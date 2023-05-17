@@ -36,8 +36,12 @@
     <div id="mainhome">
         <div class="visits1" style="display: flex; justify-content: flex-end;">
             <div class="visits" style="display:flex; flex-direction: row;justify-content:space-around ">
-                <div class="visitlast">
-                    <%
+                <div class="visitlast" style="width:auto;height: 150px; background: transparent; border: transparent;">
+                    <h3 style="margin-bottom: 5px;margin-top: 0px; text-align: center;padding-right: 20px ">Прошедшие события</h3>
+                    <div class="visitlast">
+                <%  if (files) {
+
+
                     var currentDate = new Date();
                     var nearestVisit = null;
                     var nearestDate = null;
@@ -87,14 +91,17 @@
                         <% if (nearestVisit.id_conclusion) { %>
                             <a href="/carta/carta_file/<%= nearestVisit.id_conclusion %>" class="butonok">Посмотреть</a>
                         <% }else { %>
-                            <a href="/carta?needaddform=true" class="butonok">Добавить</a>
+                            <a href="/carta?needaddform=true&visit_id=<%=nearestVisit.visit_id%>&data_visit=<%=nearestDate.toISOString()%>" class="butonok">Добавить</a>
                         <% } %>
-                    <% } %>
-
+                    <% }} %>
                 </div>
+                </div>
+                <div class="visitFeature" style="width: auto;height: 150px; background: transparent; border: transparent;">
+                    <h3 style="margin-bottom: 5px;margin-top: 0px; text-align: center; padding-right: 20px; ">Наступающие события</h3>
                 <div class="visitFeature">
-                    <%
-                    var currentDate = new Date();
+                    <%                    if (files) {
+
+                        var currentDate = new Date();
                     var nearestVisit = null;
                     var nearestDate = null;
 
@@ -141,8 +148,9 @@
                                 <div class="name-inp"><%= nearestVisit.name_doctor %></div>
                             </div>
                         <% } %>
-                    <% } %>
+                    <% }} %>
                 </div>
+            </div>
             </div>
         </div>
     </div>

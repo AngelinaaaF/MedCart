@@ -258,15 +258,13 @@ input[type="password"],.PassTogl {
 	cursor: pointer;
 	text-decoration: none;
 }
-.button:hover,.btn:hover,.btn-index:hover,#add-record-btn:hover,.btn-cont:hover {
+.button:hover,.btn:hover,.btn-index:hover,#add-record-btn:hover,#add-record-btn-to-folder:hover,.btn-cont:hover {
 	background-color: rgba(0, 123, 255, 0.75);
 	text-decoration: none;
 	color: #fff;
-
-
 }
 
-.button:focus,.btn:focus,.btn-index:focus,#add-record-btn:focus,.btn-cont:focus {
+.button:focus,.btn:focus,.btn-index:focus,#add-record-btn:focus,#add-record-btn-to-folder:focus.btn-cont:focus {
 	outline: none;
 	box-shadow: 0 0 0 4px #ffffff;
 	text-decoration: none;
@@ -492,7 +490,7 @@ select {
 
 
 /*CAAAAAAAAAAAAAAAARTAAAAAAAAA*/
-#add-record-btn{
+#add-record-btn,#add-record-btn-to-folder{
 	display: flex;
 	flex-wrap: wrap;
 	justify-content: center;
@@ -1159,21 +1157,7 @@ flex-direction: column;
 .visit-name{
 	width: 150px;
 }
-#modal-visit {
-	display: none;
-	position: fixed;
-	flex-direction: column;
-	top: 47%;
-	left: 86%;
-	transform: translate(-50%, -50%);
-	width: 250px;
-	height:auto;
-	background-color: #f8f8f8;
-	border-radius: 5px;
-	padding: 10px;
-	box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.2);
-	z-index: 9999;
-}
+
 .modal-content{
 }
 .visitInput{
@@ -1192,7 +1176,7 @@ flex-direction: column;
 .calendar-wrapper {
 	width: 450px;
 	padding: 20px;
-	margin-left: 100px;
+	margin-left: 200px;
 	border: 1px solid #dcdcff;
 	border-radius: 10px;
 	background: #fff;
@@ -1298,4 +1282,144 @@ td.not-current {
 .visit-cal-name{
 	margin: 0px;
 	text-align: left;
+}
+	 /* Стили для модального окна */
+ .modal-folder {
+	 display: none; /* По умолчанию скрываем модальное окно */
+	 position: fixed;
+	 z-index: 1;
+	 left: 0;
+	 top: 0;
+	 width: 100%;
+	 height: 100%;
+	 background-color: rgba(0, 0, 0, 0.5); /* Черный полупрозрачный фон */
+ }
+
+.modal-content-folder {
+	background-color: #fefefe;
+	margin: 0 auto;
+	margin-top: 100px;
+	padding: 20px;
+	border: 1px solid #888;
+	width: 303px;
+	height: 300px;
+}
+
+.close-folder {
+	color: #aaa;
+	float: right;
+	font-size: 28px;
+	font-weight: bold;
+}
+
+.close-folder:hover,
+.close-folder:focus {
+	color: black;
+	text-decoration: none;
+	cursor: pointer;
+}
+	 /* Стили для модального окна */
+#modal-visit {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background-color: rgba(0, 0, 0, 0.5);
+	display: none;
+	justify-content: center;
+	align-items: center;
+	z-index: 9999;/* Затемнение фона */
+
+ }
+
+.modal-content-addvisit {
+	position: absolute;
+	top: 35%;
+	left: 76%;
+	transform: translate(-50%, -50%);
+	height: 250px;
+	padding: 20px;
+	background-color: #fefefe;
+	margin: 0 auto;
+	margin-top: 100px;
+	border: 1px solid #888;
+	width: 303px;
+}
+
+.close-content {
+	position: absolute;
+	top: 10px;
+	right: 10px;
+	cursor: pointer;
+	font-size: 25px;
+	color: #aaa;
+}
+
+.close-content:hover {
+	color: #000000;
+}
+textarea {
+	resize: none; /* Запрещаем изменять размер */
+}
+
+.folder-gallery {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+}
+
+.folder-item {
+	margin: 10px;
+	text-align: center;
+}
+
+.folder-link {
+	display: block;
+	text-decoration: none;
+	color: #000;
+}
+
+.folder-link:hover {
+	color: #ff0000; /* Замените на желаемый цвет при наведении */
+}
+
+.folder-icon {
+	font-size: 48px; /* Замените на желаемый размер иконки */
+	margin-bottom: 10px;
+}
+/* Стили модального окна для выбора */
+.modal-for-choose {
+	display: none;
+	position: fixed;
+	z-index: 1000;
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: 100%;
+	background-color: rgba(0, 0, 0, 0.6);
+	overflow: auto;
+}
+
+.modal-content-choose {
+	background-color: #fefefe;
+	margin: 20% auto;
+	padding: 20px;
+	border: 1px solid #888;
+	width: 80%;
+}
+
+.close-choose {
+	color: #aaa;
+	float: right;
+	font-size: 28px;
+	font-weight: bold;
+	cursor: pointer;
+}
+/* Стили для подсветки выбранных файлов */
+.file.selected {
+	background-color: #1bd6f4; /* Любой цвет или стиль, который вы хотите использовать для подсветки */
 }
