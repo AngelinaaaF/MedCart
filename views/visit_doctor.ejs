@@ -43,7 +43,7 @@
                 <div id="divCal"></div>
             </div>
             <button id="add-visit-btn" class="btn" style="align-self: flex-start; width: 300px; margin-right: 150px">Добавить событие</button>
-            <button id="create-folder-btn" class="btn" style="position: absolute; bottom: 0; right: 0; margin-right: 150px;width: 300px">Создать папку</button>
+            <button id="create-folder-btn" class="btn" style="position: absolute; bottom: 0; right: 0; margin-right: 150px;width: 300px">Создать новую папку</button>
         </div>
         <hr style="width: 80%;border-bottom: 2px solid #8bb9d5; margin-top: 15px">
         <div id="create-folder-modal" class="modal-folder">
@@ -51,22 +51,22 @@
                 <span id="close-modal-btn" class="close-folder">&times;</span>
                 <h2>Создать папку</h2>
                 <form method="post" action="/addfolder">
-                    <label for="name_folder">Название:</label>
-                    <input type="text" name="name_folder" id="name_folder" required>
-                    <label for="description">Описание:</label>
-                    <input type="textarea" name="description" id="description" >
-                    <button type="submit">Создать</button>
+                    <label for="name_folder" class="profileLabel">Название:</label>
+                    <input type="text" class="visitInput" name="name_folder" id="name_folder" required>
+                    <label for="description" class="profileLabel">Описание:</label>
+                    <input type="textarea" class="visitInput" name="description" id="description" >
+                    <button type="submit" class="butonok" style="margin-top: 25px; justify-content: center">Создать</button>
                 </form>
             </div>
         </div>
-        <div class="folders">
+        <div class="folders" >
             <ul class="folder-gallery">
                 <% folders.forEach(function(folder) { %>
                     <li class="folder-item">
                         <a href="/carta?folder=<%= folder.id_folder %>" rel="noopener noreferrer" class="folder-link">
-                            <i class="fas fa-folder folder-icon"></i>
-                            <%= folder.name_folder %>
+                            <img src="/images/icon-folder.png" alt="Иконка папки" class="folder-icon">
                         </a>
+                        <span class="folder-name"><%= folder.name_folder %></span>
                     </li>
                 <% }); %>
             </ul>

@@ -509,7 +509,7 @@ router.get('/carta', function (req, res, next) {
             });
         }
         // Query the database for all files uploaded by the user
-        connection.query('SELECT files.file_path as file_path, conclusion.folder as folder,conclusion.comment as comment, conclusion.type_doctor as type_doctor,conclusion.type_info as type_info, files.file_id as file_id, files.file_type as file_type, conclusion.name_conclusion as name_conclusion, conclusion.type_conclusion as type_conclusion, conclusion.data_conclusion as data_conclusion, conclusion.id_conclusion as id_conclusion FROM files left join conclusion on files.id_conclusion = conclusion.id_conclusion where files.user_id =?', [req.session.user_id], function (error, results, fields) {
+        connection.query('SELECT files.file_path as file_path, conclusion.folder as folder,conclusion.comment as comment,conclusion.folder as folder, conclusion.type_doctor as type_doctor,conclusion.type_info as type_info, files.file_id as file_id, files.file_type as file_type, conclusion.name_conclusion as name_conclusion, conclusion.type_conclusion as type_conclusion, conclusion.data_conclusion as data_conclusion, conclusion.id_conclusion as id_conclusion FROM files left join conclusion on files.id_conclusion = conclusion.id_conclusion where files.user_id =?', [req.session.user_id], function (error, results, fields) {
             results.forEach(element => {
                 if (element['data_conclusion'] !== undefined && element['data_conclusion'] != null) {
                     element['data_conclusion'] = formatDate(element['data_conclusion'])
@@ -852,6 +852,22 @@ router.post('/addfolder', function (req, res, next) {
     });
 
 
+});
+
+router.post('/addconclinfolder', function (req, res, next) {
+    console.log(req.session)
+    if (!req.session.loggedin) {
+        res.redirect('/');
+        return;
+    }
+    console.log(req.body);
+    if (req.body.selectedFiles){
+        var quere = 'UPDATE conclusion SET folder = ? WHERE id_conclusion IN (?) AND user_id = ?';
+        connection.query(quere, [req.body.id_folder, req.body.selectedFiles,req.session.user_id], function(error, results, fields) {
+            if (error) throw error;
+            res.redirect('/carta?folder=' + req.body.id_folder)
+        });
+    }
 });
 module.exports = router;
 

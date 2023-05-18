@@ -764,6 +764,7 @@ width: 100%;
 	border: 1px solid #eeecec;
 	box-shadow: 0 0 4px #c5c3c3;
 	color: black;
+	border-radius: 3px;
 }
 .butonok:hover{
 	background-color: #93bcd5;
@@ -795,7 +796,14 @@ width: 100%;
 	gap: 20px;
 	margin-top: 10px;
 }
-
+#gallery-h {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: left;
+	align-items: center;
+	gap: 20px;
+	margin-top: 10px;
+}
 .file {
 	position: relative;
 	width: 220px;
@@ -1301,7 +1309,7 @@ td.not-current {
 	margin-top: 100px;
 	padding: 20px;
 	border: 1px solid #888;
-	width: 303px;
+	width: 400px;
 	height: 300px;
 }
 
@@ -1368,19 +1376,28 @@ textarea {
 	flex-wrap: wrap;
 	justify-content: center;
 	list-style-type: none;
-	margin: 0;
-	padding: 0;
+	padding: 4px;
+	width: auto;
+	margin-left: 200px;
+	margin-right: 200px;
+	margin-top: 15px;
+}
+.folder-icon{
+	width: 75px;
 }
 
 .folder-item {
 	margin: 10px;
 	text-align: center;
+	width: 100px;
+	height: 95px;
 }
 
 .folder-link {
 	display: block;
 	text-decoration: none;
 	color: #000;
+	height: 75px;
 }
 
 .folder-link:hover {
@@ -1420,6 +1437,25 @@ textarea {
 	cursor: pointer;
 }
 /* Стили для подсветки выбранных файлов */
-.file.selected {
-	background-color: #1bd6f4; /* Любой цвет или стиль, который вы хотите использовать для подсветки */
+.file:active {
+	border: 2px solid #3dad71;/* Любой цвет или стиль, который вы хотите использовать для подсветки */
+}
+
+.file.active{
+	filter: brightness(0.9);
+}
+.file.active::after {
+	content: "✔";
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	font-size: 70px;
+	border-radius: 50%;
+	z-index: 1;
+	color: black;
+}
+
+.folder-icon:hover {
+	filter: brightness(0.8); /* Изменение яркости для эффекта при наведении */
 }

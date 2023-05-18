@@ -80,56 +80,57 @@
     <div id="mainCarta">
         <div id="MainBut">
             <div class="plusnote" style="display: flex;margin-bottom: 10px; align-items: center;">
-                <h2 style="margin-left: 30px; text-align: left; ">Медицинская карта</h2>
                 <% if(folder) { %>
-                    <h2 style="margin-left: 30px; text-align: left; "><%= folder.name_folder %></h2>
-                <% } %>
-
-                <button id="add-record-btn" onclick="toggleForm(); hideAddRecordBtn()">
-                    <img src="images/addconcluc.png" class="add-item-image"/> Добавить запись
-                </button>
+                    <h2 style="margin-left: 30px; text-align: left; ">Директория "<%= folder.name_folder %>"</h2>
+                <% } else{ %>
+                        <h2 style="margin-left: 30px; text-align: left; ">Медицинская карта</h2>
+                        <button id="add-record-btn" onclick="toggleForm(); hideAddRecordBtn()">
+                            <img src="images/addconcluc.png" class="add-item-image"/> Добавить новую запись
+                        </button>
+                    <%}%>
                 <% if(folder) { %>
-                    <button id="add-record-btn-to-folder" onclick="openChooseModal()">
-                        <img src="images/addconcluc.png" class="add-item-image"/> Выбрать в папку
+                        <button id="add-record-btn" style="margin-right: 15px" onclick="toggleForm(); hideAddRecordBtn()">
+                            <img src="images/addconcluc.png" class="add-item-image"/> Добавить новую запись
+                        </button>
+                    <button id="add-record-btn-to-folder" style="width: auto;margin-left: 5px" onclick="openChooseModal()">
+                        <img src="images/icon-font-folder-upload-in.png" class="add-item-image" /> Выбрать существующую запись
                     </button>
                 <% } %>
                 <div id="modal-for-choose" class="modal-for-choose">
-                    <div class="modal-content-choose">
+                    <div class="modal-content-choose" >
                         <span class="close-choose" onclick="closeChooseModal()">&times;</span>
                         <h2>Выберите файлы</h2>
-                        <div id="gallery" style="display:flex;">
+                        <div id="gallery-h" style="display:flex;">
                             <% not_filter_files.reverse().forEach(function(file) { %>
-                                <div class="file" onclick="selectFile('<%= file.id_conclusion %>')">
+                                <div class="file" style="width: 150px;height: 150px;" onclick="toggleSelection('<%= file.id_conclusion %>')">
                                     <% if(file.file_type === 'png' || file.file_type === 'jpeg' || file.file_type === 'jpg')
                                     { %>
-                                            <img src="<%= file.file_path %>" alt="<%= file.name_conclusion %>" />
+                                        <img src="<%= file.file_path %>" alt="<%= file.name_conclusion %>"/>
                                         </a>
                                     <% } else if (file.file_type === 'pdf') { %>
-                                        <a href="/carta/carta_file/<%= file.id_conclusion %>" rel="noopener noreferrer">
-                                            <canvas id="canvas_<%= file.id_conclusion %>"></canvas>
+                                            <canvas id="canvas_choose<%= file.id_conclusion %>"></canvas>
                                         </a>
                                         <script>
-                                            previewPdf("file\\upload\\<%= file.file_path %>", "canvas_<%= file.id_conclusion %>");
+                                            previewPdf("file\\upload\\<%= file.file_path %>", "canvas_choose<%= file.id_conclusion %>");
                                         </script>
                                     <% }
                                     else if (file.file_type === 'doc' || file.file_type === 'docx') { %>
-                                    <a href="/carta/carta_file/<%= file.id_conclusion %>" rel="noopener noreferrer">
                                         <iframe src="https://docs.google.com/gview?url=<%= file.file_path %>&embedded=true"
                                                 style="width:100%; height:600px;" frameborder="0"></iframe>
-                                        <% } else { %>
-                                            <div class="file-icon">
-                                                <a class="fa fa-file">Скачать</a>
-                                            </div>
                                         <% } %>
                                         <div class="file-name"><%= file.name_conclusion %></div>
                                 </div>
                             <% }); %>
                         </div>
+                        <div class="button-container">
+                        <button class="btn"style="margin-top: 15px;" onclick="addSelectedFiles()">Добавить</button>
+                        </div>
                     </div>
                 </div>
                 <script>
                     // Открытие модального окна для выбора
-                    function openChooseModal() {
+
+                        function openChooseModal() {
                         var modal = document.getElementById("modal-for-choose");
                         modal.style.display = "block";
                     }
@@ -144,21 +145,56 @@
                     // Массив для хранения выбранных файлов
                     var selectedFiles = [];
 
-                    function selectFile(fileId) {
-                        var fileElement = document.getElementById("file_" + fileId);
-                        var fileIndex = selectedFiles.indexOf(fileId);
-
-                        if (fileIndex === -1) {
-                            // Файл не выбран, добавляем его в массив и отмечаем цветом
+                    function toggleSelection(fileId) {
+                        var index = selectedFiles.indexOf(fileId);
+                        if (index === -1) {
+                            // Файл не выбран, добавляем его в массив
                             selectedFiles.push(fileId);
-                            fileElement.style.backgroundColor = "lightblue";
                         } else {
-                            // Файл уже выбран, удаляем его из массива и сбрасываем цвет
-                            selectedFiles.splice(fileIndex, 1);
-                            fileElement.style.backgroundColor = "";
+                            // Файл уже выбран, удаляем его из массива
+                            selectedFiles.splice(index, 1);
                         }
-                    }
 
+                        // Применяем стиль для отображения выбора файла
+                        var fileElement = document.querySelector('.file[data-file-id="' + fileId + '"]');
+                        fileElement.classList.toggle('selected');
+                    }
+                    // Получаем все элементы с классом "file"
+                    var fileElements = document.getElementsByClassName('file');
+
+                    // Добавляем обработчик клика для каждого элемента
+                    Array.from(fileElements).forEach(function(element) {
+                        element.addEventListener('click', function() {
+                            // Переключаем класс "active" для текущего элемента
+                            this.classList.toggle('active');
+                        });
+                    });
+
+
+
+
+                    function addSelectedFiles() {
+                        // Отправить массив выбранных файлов на сервер через POST-запрос
+                        fetch('/addconclinfolder', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({
+                                selectedFiles: selectedFiles,
+                                <% if(folder){ %>id_folder:<%= folder.id_folder %>
+                                <% }else { %> id_folder: undefined
+                                <% } %>
+                            })}).then(response => response.json())
+                                .then(data => {
+                                    // Обработка ответа от сервера
+                                    console.log(data);
+                                })
+                                .catch(error => {
+                                    // Обработка ошибок
+                                    console.error('Ошибка:', error);
+                                });
+                        }
                 </script>
             </div>
             <hr style="width: 100%;border-bottom: 2px solid #8bb9d5;">
@@ -237,7 +273,7 @@
                                 </script>
                             <% }
                             else if (file.file_type === 'doc' || file.file_type === 'docx') { %>
-                            <a href="/carta/carta_file/<%= file.id_conclusion %>" rel="noopener noreferrer">
+                            <a href="/carta/carta_file/<%= file.id_conclusion %>" rel="noopener noreferrer"/>
                                 <iframe src="https://docs.google.com/gview?url=<%= file.file_path %>&embedded=true"
                                         style="width:100%; height:600px;" frameborder="0"></iframe>
                                 <% } else { %>
@@ -259,7 +295,6 @@
                                     </a>
                                 <% } else if (file.file_type === 'pdf') { %>
                                     <a href="/carta/carta_file/<%= file.id_conclusion %>" rel="noopener noreferrer">
-
                                         <canvas id="canvas_list<%= file.id_conclusion %>"></canvas>
                                     </a>
                                     <script>
