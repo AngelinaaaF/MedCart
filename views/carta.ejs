@@ -65,10 +65,6 @@
                         <img src="images/edcart.png" class="nav-item-image"/>
                         Мед.карточка</a></li>
                 <li>
-                    <a href="/visit_doctor">
-                        <img src="images/visitdoc.png" class="nav-item-image"/>
-                        Визит к врачу</a></li>
-                <li>
                     <a href="/logout">
                         <img src="images/logout.png" class="nav-item-image"/>
                         Выйти
@@ -81,19 +77,37 @@
         <div id="MainBut">
             <div class="plusnote" style="display: flex;margin-bottom: 10px; align-items: center;">
                 <% if(folder) { %>
-                    <h2 style="margin-left: 30px; text-align: left; ">Директория "<%= folder.name_folder %>"</h2>
+                    <a href="/carta">
+                        <img src="images/icon-back-black.png" class="nav-item-image" style="margin-right: 0px; width: 35px;height: 35px"/>
+                     </a>
+                    <h2 style="margin-left: 10px; text-align: left; ">Директория "<%= folder.name_folder %>"</h2>
                 <% } else{ %>
-                        <h2 style="margin-left: 30px; text-align: left; ">Медицинская карта</h2>
+                        <h2 style="margin-left: 30px; text-align: left; width: 300px">Медицинская карта</h2>
+                        <button id="create-folder-btn" class="add-record-folder" style="margin-right: 15px; margin-left:300px; width: 250px;">
+                            <img src="images/add-folder.png" class="add-item-image"/> Создать новую папку
+                        </button>
                         <button id="add-record-btn" onclick="toggleForm(); hideAddRecordBtn()">
                             <img src="images/addconcluc.png" class="add-item-image"/> Добавить новую запись
                         </button>
+                        <div id="create-folder-modal" class="modal-folder" style="z-index: 9999">
+                            <div class="modal-content-folder">
+                                <span id="close-modal-btn" class="close-folder">&times;</span>
+                                <form method="post" action="/addfolder">
+                                    <label for="name_folder" class="profileLabel">Название:</label>
+                                    <input type="text" class="visitInput" name="name_folder" id="name_folder" required>
+                                    <label for="description" class="profileLabel">Описание:</label>
+                                    <input type="textarea" class="visitInput" name="description" id="description" >
+                                    <button type="submit" class="butonok" style="margin-top: 25px; justify-content: center">Создать</button>
+                                </form>
+                            </div>
+                        </div>
                     <%}%>
                 <% if(folder) { %>
                         <button id="add-record-btn" style="margin-right: 15px" onclick="toggleForm(); hideAddRecordBtn()">
                             <img src="images/addconcluc.png" class="add-item-image"/> Добавить новую запись
                         </button>
                     <button id="add-record-btn-to-folder" style="width: auto;margin-left: 5px" onclick="openChooseModal()">
-                        <img src="images/icon-font-folder-upload-in.png" class="add-item-image" /> Выбрать существующую запись
+                        <img src="images/icon-font-folder-upload-in.png" class="add-item-image" /> Выбрать из медкарты
                     </button>
                 <% } %>
                 <div id="modal-for-choose" class="modal-for-choose">
@@ -169,9 +183,6 @@
                             this.classList.toggle('active');
                         });
                     });
-
-
-
 
                     function addSelectedFiles() {
                         // Отправить массив выбранных файлов на сервер через POST-запрос
@@ -250,7 +261,7 @@
 
         <div id="galery-sort" style="margin-top: 15px">
             <div class="galery-list">
-                <div id="view-switcher">
+                <div id="view-switcher" style="margin-right: 10px">
 
                     <div name="listwiew" class="listwiew"><i class="fa fa-th-list"></i></div>
                     <div name="gallery_list" class="gallerywiew" style="margin-left: 10px;"><i
@@ -259,6 +270,7 @@
                 <div id="gallery" style="display:flex;">
                     <% files.reverse().forEach(function(file) { %>
                         <div class="file">
+
                             <% if(file.file_type === 'png' || file.file_type === 'jpeg' || file.file_type === 'jpg')
                             { %>
                                 <a href="/carta/carta_file/<%= file.id_conclusion %>" rel="noopener noreferrer">
@@ -280,8 +292,15 @@
                                     <div class="file-icon">
                                         <a class="fa fa-file">Скачать</a>
                                     </div>
-                                <% } %>
-                                <div class="file-name"><%= file.name_conclusion %></div>
+                                <% } %><div class="file-name" style="font-size: 14px">
+                                    <%= file.name_conclusion %><br>
+                                    <% var date = new Date(file.data_conclusion);
+                                        var options = { day: 'numeric', month: 'long', year: 'numeric' };
+                                        var formattedDate = date.toLocaleDateString('ru-RU', options);
+                                    %>
+                                    <%= formattedDate %>
+                                </div>
+
                         </div>
                     <% }); %>
                 </div>
@@ -382,7 +401,9 @@
                     <% }); %>
                 </ul>
             </div>
-            <div class="sort-wrapper">
+            <div id="sort-fold" style="padding: 0px;display: flex; flex-direction: column;width: 250px; margin-left: 5px">
+
+                <div class="sort-wrapper">
                 <script>
                     const galleryViewButton = document.querySelector('.gallerywiew');
                     const listViewButton = document.querySelector('.listwiew');
@@ -527,6 +548,23 @@
                 </div>
 
             </div>
+                <div class="folder-wrapper" style="margin-top: 15px">
+                    <p style="text-align: left; margin: 7px 0px 2px 15px;">Просмотреть папки</p>
+                    <hr style="width: 90%;border-bottom: 2px solid #8bb9d5;">
+                    <div class="folders" style="overflow-y: auto; margin-top: 1px" >
+                        <ul class="folder-gallery">
+                            <% folders.forEach(function(folder) { %>
+                                <li class="folder-item">
+                                    <a href="/carta?folder=<%= folder.id_folder %>" rel="noopener noreferrer" class="folder-link">
+                                        <img src="/images/icon-folder.png" alt="Иконка папки" class="folder-icon">
+                                    </a>
+                                    <span class="folder-name"><%= folder.name_folder %></span>
+                                </li>
+                            <% }); %>
+                        </ul>
+                    </div>
+                </div>
+        </div>
         </div>
         <div id="upload-form" style="display: none;">
             <form action="/file/upload" method="POST" enctype="multipart/form-data">
@@ -827,6 +865,36 @@
     if (urlParams.get('needaddform') === 'true') {
         toggleForm();
     }
+
+</script>
+<script>
+    // Получаем элементы кнопки и модального окна
+    var createFolderBtn = document.getElementById("create-folder-btn");
+    var createFolderModal = document.getElementById("create-folder-modal");
+
+    // Обработчик события для открытия модального окна
+    createFolderBtn.addEventListener("click", function() {
+        createFolderModal.style.display = "block";
+    });
+
+    // Обработчик события для закрытия модального окна
+    var closeModalBtn = document.getElementById("close-modal-btn");
+    closeModalBtn.addEventListener("click", function() {
+        createFolderModal.style.display = "none";
+    });
+    form.addEventListener('submit', function (event) {
+        event.preventDefault();
+
+        // Получаем значения полей формы
+        const name_folder = document.getElementById('name_folder').value;
+        const description = document.getElementById('description').value;
+
+        // Выполняем необходимые действия с полученными значениями
+        // Например, отправляем данные на сервер или обрабатываем локально
+
+        // После выполнения действий закрываем модальное окно
+        modal.style.display = 'none';
+    });
 
 </script>
 </body>

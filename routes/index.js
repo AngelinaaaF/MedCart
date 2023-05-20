@@ -286,7 +286,7 @@ router.get('/home', function (req, res, next) {
         console.log(results)
         if (results.length === 0) {
             res.render('home', {
-                files: []
+                files: [], visiters:[]
             });
             console.log(req.body)
             console.log(results)
@@ -295,7 +295,8 @@ router.get('/home', function (req, res, next) {
             console.log(results)
             // Pass the files array to the template
             res.render('home', {
-                files: results
+                files: results,visiters:results
+
             });
         }
     });
@@ -497,7 +498,6 @@ const {query} = require("express");
 const {log} = require("debug");
 router.get('/carta', function (req, res, next) {
     console.log(req.session)
-
     // If the user is loggedin
     if (req.session.loggedin) {
         let folder = null;
@@ -508,6 +508,18 @@ router.get('/carta', function (req, res, next) {
                 }
             });
         }
+        let folders;
+        connection.query('SELECT * FROM folder where user_id =?', [req.session.user_id], function (error, results, fields) {
+            console.log(results)
+            if (results.length === 0) {
+                folders = []
+                console.log(results)
+
+            } else {
+                folders = results
+                console.log(results)
+            }
+        });
         // Query the database for all files uploaded by the user
         connection.query('SELECT files.file_path as file_path, conclusion.folder as folder,conclusion.comment as comment,conclusion.folder as folder, conclusion.type_doctor as type_doctor,conclusion.type_info as type_info, files.file_id as file_id, files.file_type as file_type, conclusion.name_conclusion as name_conclusion, conclusion.type_conclusion as type_conclusion, conclusion.data_conclusion as data_conclusion, conclusion.id_conclusion as id_conclusion FROM files left join conclusion on files.id_conclusion = conclusion.id_conclusion where files.user_id =?', [req.session.user_id], function (error, results, fields) {
             results.forEach(element => {
@@ -525,7 +537,9 @@ router.get('/carta', function (req, res, next) {
                     needaddform: req.query.needaddform,
                     visit_id: req.query.visit_id,
                     data_visit: req.query.data_visit,
-                    folder: folder
+                    folder: folder,
+                    not_filter_files : [],
+                    folders: folders
                 });
                 return;
             }
@@ -551,7 +565,8 @@ router.get('/carta', function (req, res, next) {
                 visit_id: req.query.visit_id,
                 data_visit: req.query.data_visit,
                 folder: folder,
-                not_filter_files : not_filter_files
+                not_filter_files : not_filter_files,
+                folders:folders
             });
         });
     } else {
@@ -822,12 +837,12 @@ router.post('/visit_doctor', function (req, res, next) {
     if (req.body.visit_id) {
         connection.query('UPDATE visit SET name_visit=?, data_visit=?, type_doctor=?, name_doctor=?, place=?,type_doctor=? ,id_conclusion = ? WHERE visit_id = ?', [req.body.name_visit, req.body.data_visit, req.body.type_doctor, req.body.name_doctor, req.body.place, req.body.type_doctor, req.body.id_conclusion, req.body.visit_id], function (error, results, fields) {
             if (error) throw error;
-            res.redirect('/visit_doctor');
+            res.redirect('/home');
         });
     } else {
         connection.query('INSERT INTO visit (user_id, name_visit,data_visit,type_doctor,name_doctor,place,id_conclusion) VALUES (?, ?,?,?, ?,?,?)', [req.session.user_id, req.body.name_visit, req.body.data_visit, req.body.type_doctor, req.body.name_doctor, req.body.place, req.body.type_doctor, req.body.id_conclusion], function (error, results, fields) {
             if (error) throw error;
-            res.redirect('/visit_doctor')
+            res.redirect('/home')
         });
     }
 });
